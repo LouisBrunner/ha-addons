@@ -1,0 +1,30 @@
+name: "RTSP Stream Fixer"
+description: "Fixes the non-standard RTSP streams so they can be used with FFMpeg"
+version: "0.0.1"
+slug: "rtsp-stream-fixer"
+url: "https://github.com/LouisBrunner/ha-addons/blob/main/rtsp-fixer"
+init: false
+image: ghcr.io/louisbrunner/ha-rtsp-fixer-{arch}
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+options:
+  streams:
+    - name: example
+      url: rtsp://192.168.0.0:1111/stream
+  debug: false
+schema:
+  debug: bool?
+  streams:
+    - name: str
+      url: url
+      fix_force_tcp_in_transport: bool?
+ports:
+  6666/tcp: 6666
+  6666/udp: 6666
+ports_description:
+  6666/tcp: "RTSP Stream Fixer (TCP)"
+  6666/udp: "RTSP Stream Fixer (UDP)"

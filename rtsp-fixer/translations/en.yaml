@@ -1,0 +1,10 @@
+---
+configuration:
+  debug:
+    name: Debug Mode
+    decription: >-
+      Enables debug logging, used mostly for development or debugging purposes
+  streams:
+    name: Streams
+    description: >-
+      A list of streams and how to fix them. Check the documentation for an example.

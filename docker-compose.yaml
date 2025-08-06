@@ -1,0 +1,19 @@
+services:
+  devcontainer:
+    image: ghcr.io/home-assistant/devcontainer:2-addons
+    privileged: true
+    environment:
+      - WORKSPACE_DIRECTORY=/mnt/supervisor/addons/local/ha-addons
+    command: sleep infinity
+    volumes:
+      - .:/mnt/supervisor/addons/local/ha-addons:cached
+      - docker-data:/var/lib/docker
+      - supervisor-data:/mnt/supervisor
+    ports:
+      - "6666:6666"
+      - "7123:8123"
+      - "7357:4357"
+
+volumes:
+  docker-data:
+  supervisor-data:
