@@ -20,7 +20,7 @@ jobs:
       changed_addons: ${{ steps.changed_addons.outputs.addons }}
       changed: ${{ steps.changed_addons.outputs.changed }}
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v5
 
       - id: changed_files
         uses: jitterbit/get-changed-files@v1
@@ -67,7 +67,7 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v5
 
       - id: info
         uses: home-assistant/actions/helpers/info@master
