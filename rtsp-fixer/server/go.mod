@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/bluenviron/gortsplib/v4 v4.16.2
 	github.com/pion/rtcp v1.2.16
-	github.com/pion/rtp v1.8.25
+	github.com/pion/rtp v1.9.0
 	github.com/sirupsen/logrus v1.9.3
 )
 
