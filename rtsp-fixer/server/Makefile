@@ -15,3 +15,9 @@ vlc-test:
 mod-tidy:
 	go mod tidy
 .PHONY: mod-tidy
+
+vet:
+	gofmt -d -e -s .
+	go vet ./...
+	go tool staticcheck ./...
+.PHONY: vet

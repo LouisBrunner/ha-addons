@@ -1,0 +1,41 @@
+name: Vet
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  find:
+    name: Find add-ons
+    runs-on: ubuntu-latest
+    outputs:
+      addons: ${{ steps.addons.outputs.addons_list }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - id: addons
+        uses: home-assistant/actions/helpers/find-addons@e91ad1948e57189485b9c1ad608af0c303946f89
+
+  vet:
+    name: Vet add-on ${{ matrix.path }}
+    runs-on: ubuntu-latest
+    needs: find
+    strategy:
+      matrix:
+        path: ${{ fromJson(needs.find.outputs.addons) }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: ./${{ matrix.path }}/server/go.mod
+          cache-dependency-path: ./${{ matrix.path }}/server/go.sum
+
+      - name: Run vet
+        run: make vet
+        working-directory: ./${{ matrix.path }}/server

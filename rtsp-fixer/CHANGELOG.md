@@ -1,3 +1,7 @@
+## 0.0.4
+
+Fix SIGSEGV crash when saving H264 thumbnails caused by stride-padded YCbCr buffers from openh264.
+
 ## 0.0.3
 
 Fix servers binding to 127.0.0.1, which prevented HA addon port mapping from working.
