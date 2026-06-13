@@ -1,3 +1,7 @@
+## 0.0.5
+
+Fix addon update not being detected due to a change of how upstream actions build the Docker image name.
+
 ## 0.0.4
 
 Fix SIGSEGV crash when saving H264 thumbnails caused by stride-padded YCbCr buffers from openh264.
