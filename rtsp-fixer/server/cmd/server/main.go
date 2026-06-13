@@ -98,7 +98,6 @@ func work(ctx context.Context, logger *logrus.Logger) error {
 		baseFolder = "/data"
 	}
 
-	logger.Infof("starting server on port %s", cfg.port)
 	server, err := proxy.NewServer(logger, baseFolder, cfg.port, cfg.portThumbnail, cfg.streams)
 	if err != nil {
 		return err
