@@ -5,8 +5,8 @@ go 1.26.1
 require (
 	github.com/bluenviron/gortsplib/v4 v4.16.2
 	github.com/pion/rtcp v1.2.16
-	github.com/pion/rtp v1.8.25
-	github.com/sirupsen/logrus v1.9.3
+	github.com/pion/rtp v1.10.2
+	github.com/sirupsen/logrus v1.9.4
 	github.com/y9o/go-openh264 v0.2.0
 	golang.org/x/image v0.42.0
 )
