@@ -1,3 +1,4 @@
+# Forked from https://github.com/home-assistant/builder/blob/master/actions/prepare-multi-arch-matrix/action.yml
 name: Prepare multi-arch build matrix
 description: Validate architectures and build a matrix with arch, runner OS, and full image name
 
@@ -39,6 +40,8 @@ runs:
               exit 1
               ;;
           esac
+          # FIXME: upstream uses ${arch}-${IMAGE_NAME} but HA Supervisor resolves the {arch} placeholder
+          # in config.yaml image field and expects the suffix form: ${IMAGE_NAME}-${arch}
           matrix=$(jq -c --arg arch "$arch" --arg os "$os" --arg image "${REGISTRY_PREFIX}/${IMAGE_NAME}-${arch}" \
             '.include += [{arch: $arch, os: $os, image: $image}]' <<< "${matrix}")
         done
