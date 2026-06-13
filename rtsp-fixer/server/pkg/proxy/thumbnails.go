@@ -34,7 +34,6 @@ const (
 var jpegOptions = &jpeg.Options{Quality: 85}
 
 type thumbnailData struct {
-	ignore        bool
 	lastCapture   time.Time
 	thumbnailPath string
 	thumbnail     image.Image
@@ -46,10 +45,6 @@ func (me *server) shouldRecordThumbnail(path string) bool {
 
 	thumb, ok := me.thumbs[path]
 	if !ok {
-		return false
-	}
-
-	if thumb.ignore {
 		return false
 	}
 	return time.Since(thumb.lastCapture) >= thumbnailInterval
@@ -69,7 +64,8 @@ func (me *server) serveThumbnail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "image/jpeg")
-	if err := jpeg.Encode(w, thumb.thumbnail, jpegOptions); err != nil {
+	err := jpeg.Encode(w, thumb.thumbnail, jpegOptions)
+	if err != nil {
 		me.logger.WithError(err).Errorf("failed to encode thumbnail for %q", path)
 	}
 }
@@ -79,7 +75,7 @@ func (me *server) getThumbnail(path string) (image.Image, error) {
 	defer me.thumbsMutex.RUnlock()
 
 	thumb, ok := me.thumbs[path]
-	if !ok || thumb.ignore {
+	if !ok {
 		return nil, fmt.Errorf("thumbnail for %q not found", path)
 	}
 
@@ -102,17 +98,16 @@ func (me *server) saveThumbnailH264(path string, nalUnits [][]byte) {
 }
 
 func (me *server) saveThumbnailInternal(path string, getImage func() (image.Image, error)) error {
+	me.thumbsMutex.RLock()
+	thumb, ok := me.thumbs[path]
+	me.thumbsMutex.RUnlock()
+	if !ok {
+		return fmt.Errorf("thumbnail for %q not found", path)
+	}
+
 	img, err := getImage()
 	if err != nil {
 		return fmt.Errorf("failed to get image for thumbnail: %w", err)
-	}
-
-	me.thumbsMutex.Lock()
-	defer me.thumbsMutex.Unlock()
-
-	thumb, ok := me.thumbs[path]
-	if !ok {
-		return fmt.Errorf("thumbnail for %q not found", path)
 	}
 
 	tmp := thumb.thumbnailPath + ".tmp"
@@ -135,8 +130,10 @@ func (me *server) saveThumbnailInternal(path string, getImage func() (image.Imag
 	}
 
 	me.logger.Infof("thumbnail for %s saved to %s", path, thumb.thumbnailPath)
+	me.thumbsMutex.Lock()
 	thumb.thumbnail = img
 	thumb.lastCapture = time.Now()
+	me.thumbsMutex.Unlock()
 	return nil
 }
 
@@ -176,10 +173,11 @@ func (me *client) monitorUpstream() {
 				ReadTimeout:  4 * time.Second,
 				WriteTimeout: 4 * time.Second,
 			}
-			if err := probe.Start2(); err != nil {
+			err := probe.Start2()
+			if err != nil {
 				continue
 			}
-			_, _, err := probe.Describe((*base.URL)(&url))
+			_, _, err = probe.Describe((*base.URL)(&url))
 			probe.Close()
 			if err == nil {
 				me.srv.logger.Infof("stream %q came back online, closing thumbnail stream", me.path)
@@ -194,7 +192,8 @@ func (me *client) monitorUpstream() {
 func (me *client) playThumbnailStream() (*base.Response, error) {
 	img, err := me.srv.getThumbnail(me.path)
 	if err != nil {
-		return nil, err
+		me.srv.logger.WithError(err).Warnf("no thumbnail for %q, using black placeholder", me.path)
+		img = image.NewRGBA(image.Rect(0, 0, 640, 480))
 	}
 	img = overlayError(img, me.thumbnailStream.originalErr)
 
@@ -213,7 +212,6 @@ func (me *client) playThumbnailStream() (*base.Response, error) {
 	go func() {
 		ticker := time.NewTicker(time.Second)
 		defer ticker.Stop()
-		pts := time.Duration(0)
 
 		for range ticker.C {
 			pkts, err := enc.Encode(jpegBytes)
@@ -226,7 +224,6 @@ func (me *client) playThumbnailStream() (*base.Response, error) {
 					return
 				}
 			}
-			pts += time.Second
 		}
 	}()
 
