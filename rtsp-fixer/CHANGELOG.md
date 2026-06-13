@@ -1,3 +1,7 @@
+## 0.0.5
+
+Fix image name to use the multi-arch manifest directly, matching the new CI build naming convention.
+
 ## 0.0.4
 
 Fix SIGSEGV crash when saving H264 thumbnails caused by stride-padded YCbCr buffers from openh264.
