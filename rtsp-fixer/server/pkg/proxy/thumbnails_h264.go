@@ -9,7 +9,8 @@ import (
 )
 
 func init() {
-	if err := openh264.Open(libOpenH264); err != nil {
+	err := openh264.Open(libOpenH264)
+	if err != nil {
 		panic(fmt.Sprintf("failed to load openh264: %v", err))
 	}
 }

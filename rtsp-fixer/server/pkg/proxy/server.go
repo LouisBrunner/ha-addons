@@ -93,7 +93,8 @@ func (me *server) Run(ctx context.Context) error {
 	}()
 	go func() {
 		me.logger.Infof("starting HTTP thumbnail server on %s", me.httpSrv.Addr)
-		if err := me.httpSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		err := me.httpSrv.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
 			me.logger.WithError(err).Error("HTTP thumbnail server error")
 		}
 	}()

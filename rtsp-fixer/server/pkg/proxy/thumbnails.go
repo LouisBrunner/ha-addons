@@ -64,7 +64,8 @@ func (me *server) serveThumbnail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "image/jpeg")
-	if err := jpeg.Encode(w, thumb.thumbnail, jpegOptions); err != nil {
+	err := jpeg.Encode(w, thumb.thumbnail, jpegOptions)
+	if err != nil {
 		me.logger.WithError(err).Errorf("failed to encode thumbnail for %q", path)
 	}
 }
@@ -172,10 +173,11 @@ func (me *client) monitorUpstream() {
 				ReadTimeout:  4 * time.Second,
 				WriteTimeout: 4 * time.Second,
 			}
-			if err := probe.Start2(); err != nil {
+			err := probe.Start2()
+			if err != nil {
 				continue
 			}
-			_, _, err := probe.Describe((*base.URL)(&url))
+			_, _, err = probe.Describe((*base.URL)(&url))
 			probe.Close()
 			if err == nil {
 				me.srv.logger.Infof("stream %q came back online, closing thumbnail stream", me.path)
@@ -188,14 +190,15 @@ func (me *client) monitorUpstream() {
 }
 
 func (me *client) playThumbnailStream() (*base.Response, error) {
-	img, _ := me.srv.getThumbnail(me.path)
-	if img == nil {
+	img, err := me.srv.getThumbnail(me.path)
+	if err != nil {
 		img = image.NewRGBA(image.Rect(0, 0, 640, 480))
 	}
 	img = overlayError(img, me.thumbnailStream.originalErr)
 
 	var buf bytes.Buffer
-	if err := jpeg.Encode(&buf, img, jpegOptions); err != nil {
+	err = jpeg.Encode(&buf, img, jpegOptions)
+	if err != nil {
 		return nil, fmt.Errorf("failed to encode JPEG: %w", err)
 	}
 
