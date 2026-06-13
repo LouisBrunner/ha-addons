@@ -28,7 +28,7 @@ jobs:
 
       - name: Get add-on information
         id: info
-        uses: home-assistant/actions/helpers/info@1.0.0
+        uses: home-assistant/actions/helpers/info@e91ad1948e57189485b9c1ad608af0c303946f89
         with:
           path: "./${{ inputs.addon }}"
 

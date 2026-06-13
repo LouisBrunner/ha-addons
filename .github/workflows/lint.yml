@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - id: addons
-        uses: home-assistant/actions/helpers/find-addons@1.0.0
+        uses: home-assistant/actions/helpers/find-addons@e91ad1948e57189485b9c1ad608af0c303946f89
 
   lint:
     name: Lint add-on ${{ matrix.path }}
