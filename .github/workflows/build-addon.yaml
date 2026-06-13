@@ -48,7 +48,7 @@ jobs:
 
       - name: Prepare build matrix
         id: matrix
-        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
+        uses: ./.github/actions/prepare-multi-arch-matrix
         with:
           architectures: ${{ steps.info.outputs.architectures }}
           image-name: ${{ steps.normalize.outputs.image_name }}
@@ -98,8 +98,11 @@ jobs:
       id-token: write
       packages: write
     steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+
       - name: Publish multi-arch manifest
-        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
+        uses: ./.github/actions/publish-multi-arch-manifest
         with:
           architectures: ${{ needs.prepare.outputs.architectures }}
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}

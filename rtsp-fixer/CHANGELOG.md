@@ -1,6 +1,6 @@
 ## 0.0.5
 
-Fix image name to use the multi-arch manifest directly, matching the new CI build naming convention.
+Fix CI image naming: fork upstream prepare/publish actions to restore the original {image}-{arch} per-arch image naming convention.
 
 ## 0.0.4
 
