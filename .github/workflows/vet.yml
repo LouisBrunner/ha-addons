@@ -30,23 +30,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Check for Go server
-        id: check
-        run: |
-          if [ -f "./${{ matrix.path }}/server/Makefile" ]; then
-            echo "has_server=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_server=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Set up Go
-        if: steps.check.outputs.has_server == 'true'
         uses: actions/setup-go@v6
         with:
           go-version-file: ./${{ matrix.path }}/server/go.mod
           cache-dependency-path: ./${{ matrix.path }}/server/go.sum
 
       - name: Run vet
-        if: steps.check.outputs.has_server == 'true'
         run: make vet
         working-directory: ./${{ matrix.path }}/server
