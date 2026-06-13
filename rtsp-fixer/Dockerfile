@@ -1,6 +1,7 @@
 ARG BUILD_FROM=stop-complaining
 
 FROM golang:1.26.4-alpine3.24 AS go-builder
+RUN apk add --no-cache gcc musl-dev
 WORKDIR /code
 RUN go env
 
