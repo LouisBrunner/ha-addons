@@ -34,7 +34,6 @@ const (
 var jpegOptions = &jpeg.Options{Quality: 85}
 
 type thumbnailData struct {
-	ignore        bool
 	lastCapture   time.Time
 	thumbnailPath string
 	thumbnail     image.Image
@@ -46,10 +45,6 @@ func (me *server) shouldRecordThumbnail(path string) bool {
 
 	thumb, ok := me.thumbs[path]
 	if !ok {
-		return false
-	}
-
-	if thumb.ignore {
 		return false
 	}
 	return time.Since(thumb.lastCapture) >= thumbnailInterval
@@ -79,7 +74,7 @@ func (me *server) getThumbnail(path string) (image.Image, error) {
 	defer me.thumbsMutex.RUnlock()
 
 	thumb, ok := me.thumbs[path]
-	if !ok || thumb.ignore {
+	if !ok {
 		return nil, fmt.Errorf("thumbnail for %q not found", path)
 	}
 
@@ -102,17 +97,16 @@ func (me *server) saveThumbnailH264(path string, nalUnits [][]byte) {
 }
 
 func (me *server) saveThumbnailInternal(path string, getImage func() (image.Image, error)) error {
+	me.thumbsMutex.RLock()
+	thumb, ok := me.thumbs[path]
+	me.thumbsMutex.RUnlock()
+	if !ok {
+		return fmt.Errorf("thumbnail for %q not found", path)
+	}
+
 	img, err := getImage()
 	if err != nil {
 		return fmt.Errorf("failed to get image for thumbnail: %w", err)
-	}
-
-	me.thumbsMutex.Lock()
-	defer me.thumbsMutex.Unlock()
-
-	thumb, ok := me.thumbs[path]
-	if !ok {
-		return fmt.Errorf("thumbnail for %q not found", path)
 	}
 
 	tmp := thumb.thumbnailPath + ".tmp"
@@ -135,8 +129,10 @@ func (me *server) saveThumbnailInternal(path string, getImage func() (image.Imag
 	}
 
 	me.logger.Infof("thumbnail for %s saved to %s", path, thumb.thumbnailPath)
+	me.thumbsMutex.Lock()
 	thumb.thumbnail = img
 	thumb.lastCapture = time.Now()
+	me.thumbsMutex.Unlock()
 	return nil
 }
 
@@ -192,15 +188,14 @@ func (me *client) monitorUpstream() {
 }
 
 func (me *client) playThumbnailStream() (*base.Response, error) {
-	img, err := me.srv.getThumbnail(me.path)
-	if err != nil {
-		return nil, err
+	img, _ := me.srv.getThumbnail(me.path)
+	if img == nil {
+		img = image.NewRGBA(image.Rect(0, 0, 640, 480))
 	}
 	img = overlayError(img, me.thumbnailStream.originalErr)
 
 	var buf bytes.Buffer
-	err = jpeg.Encode(&buf, img, jpegOptions)
-	if err != nil {
+	if err := jpeg.Encode(&buf, img, jpegOptions); err != nil {
 		return nil, fmt.Errorf("failed to encode JPEG: %w", err)
 	}
 
@@ -213,7 +208,6 @@ func (me *client) playThumbnailStream() (*base.Response, error) {
 	go func() {
 		ticker := time.NewTicker(time.Second)
 		defer ticker.Stop()
-		pts := time.Duration(0)
 
 		for range ticker.C {
 			pkts, err := enc.Encode(jpegBytes)
@@ -226,7 +220,6 @@ func (me *client) playThumbnailStream() (*base.Response, error) {
 					return
 				}
 			}
-			pts += time.Second
 		}
 	}()
 

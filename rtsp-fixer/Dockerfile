@@ -1,6 +1,6 @@
 ARG BUILD_FROM=stop-complaining
 
-FROM golang:1.24.5-alpine3.22 AS go-builder
+FROM golang:1.26.1-alpine3.22 AS go-builder
 WORKDIR /code
 RUN go env
 
