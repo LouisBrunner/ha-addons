@@ -1,0 +1,52 @@
+name: Vet
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  find:
+    name: Find add-ons
+    runs-on: ubuntu-latest
+    outputs:
+      addons: ${{ steps.addons.outputs.addons_list }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - id: addons
+        uses: home-assistant/actions/helpers/find-addons@e91ad1948e57189485b9c1ad608af0c303946f89
+
+  vet:
+    name: Vet add-on ${{ matrix.path }}
+    runs-on: ubuntu-latest
+    needs: find
+    strategy:
+      matrix:
+        path: ${{ fromJson(needs.find.outputs.addons) }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check for Go server
+        id: check
+        run: |
+          if [ -f "./${{ matrix.path }}/server/Makefile" ]; then
+            echo "has_server=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_server=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Go
+        if: steps.check.outputs.has_server == 'true'
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: ./${{ matrix.path }}/server/go.mod
+          cache-dependency-path: ./${{ matrix.path }}/server/go.sum
+
+      - name: Run vet
+        if: steps.check.outputs.has_server == 'true'
+        run: make vet
+        working-directory: ./${{ matrix.path }}/server

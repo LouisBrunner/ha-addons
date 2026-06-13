@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"image"
+	"image/draw"
 
 	"github.com/y9o/go-openh264"
 )
@@ -74,5 +75,10 @@ func h264ToJPEG(nalUnits [][]byte) (image.Image, error) {
 	if img == nil {
 		return nil, fmt.Errorf("no frame decoded")
 	}
-	return img, nil
+	// Go's jpeg encoder assumes YCbCr strides match pixel width, but openh264
+	// may return stride-padded buffers (alignment), causing a SIGSEGV in
+	// yCbCrToYCbCr. Convert to RGBA first to avoid that code path.
+	rgba := image.NewRGBA(img.Rect)
+	draw.Draw(rgba, rgba.Bounds(), img, img.Rect.Min, draw.Src)
+	return rgba, nil
 }

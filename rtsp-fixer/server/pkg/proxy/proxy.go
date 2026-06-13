@@ -11,10 +11,6 @@ import (
 )
 
 var (
-	errInternal = &base.Response{
-		StatusCode:    base.StatusInternalServerError,
-		StatusMessage: "Internal error",
-	}
 	errGatewayTimeout = &base.Response{
 		StatusCode:    base.StatusGatewayTimeout,
 		StatusMessage: "Gateway error",
