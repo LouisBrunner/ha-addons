@@ -11,6 +11,7 @@ services:
       - supervisor-data:/mnt/supervisor
     ports:
       - "6666:6666"
+      - "6667:6667"
       - "7123:8123"
       - "7357:4357"
 

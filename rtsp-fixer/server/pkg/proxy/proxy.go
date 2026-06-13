@@ -7,11 +7,7 @@ import (
 
 	"github.com/bluenviron/gortsplib/v4"
 	"github.com/bluenviron/gortsplib/v4/pkg/base"
-	"github.com/bluenviron/gortsplib/v4/pkg/description"
-	"github.com/bluenviron/gortsplib/v4/pkg/format"
 	"github.com/bluenviron/gortsplib/v4/pkg/headers"
-	"github.com/pion/rtcp"
-	"github.com/pion/rtp"
 )
 
 var (
@@ -114,19 +110,7 @@ func (me *server) OnPlay(ctx *gortsplib.ServerHandlerOnPlayCtx) (*base.Response,
 			StatusMessage: "you must call DESCRIBE before PLAY",
 		}, nil
 	}
-
-	clt.OnPacketRTCPAny(func(m *description.Media, p rtcp.Packet) {
-		err := clt.stream.WritePacketRTCP(m, p)
-		if err != nil {
-			me.logger.WithError(err).Errorf("error writing RTCP packet from client")
-		}
-	})
-	clt.OnPacketRTPAny(func(m *description.Media, f format.Format, p *rtp.Packet) {
-		err := clt.stream.WritePacketRTP(m, p)
-		if err != nil {
-			me.logger.WithError(err).Errorf("error writing RTP packet from client")
-		}
-	})
+	logger := me.logger.WithField("client", clt.path)
 
 	rngStr, found := ctx.Request.Header["Range"]
 	if !found {
@@ -147,10 +131,10 @@ func (me *server) OnPlay(ctx *gortsplib.ServerHandlerOnPlayCtx) (*base.Response,
 	}
 
 	url := clt.config.URL
-	me.logger.Debugf("Proxying PLAY request to %s", url.String())
+	logger.Debugf("Proxying PLAY request to %s", url.String())
 	res, err := clt.Play(&rng)
 	if err != nil {
-		me.logger.WithError(err).Errorf("error proxying PLAY request")
+		logger.WithError(err).Errorf("error proxying PLAY request")
 		return wrapError(errGatewayTimeout, err), nil
 	}
 	return res, nil

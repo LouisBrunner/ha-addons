@@ -16,8 +16,9 @@ import (
 )
 
 type config struct {
-	port    string
-	streams []proxy.StreamConfig
+	port          string
+	portThumbnail string
+	streams       []proxy.StreamConfig
 }
 
 func parseStreams(streamsStr string) ([]proxy.StreamConfig, error) {
@@ -53,6 +54,10 @@ func parseConfig(logger *logrus.Logger) (*config, error) {
 	if port == "" {
 		return nil, fmt.Errorf("internal error: PORT environment variable is not set")
 	}
+	portThumbnail := os.Getenv("PORT_THUMBNAILS")
+	if portThumbnail == "" {
+		return nil, fmt.Errorf("internal error: PORT_THUMBNAILS environment variable is not set")
+	}
 	streamsStr := os.Getenv("STREAMS")
 	if streamsStr == "" {
 		return nil, fmt.Errorf("no streams have been provided, edit your configuration")
@@ -70,8 +75,9 @@ func parseConfig(logger *logrus.Logger) (*config, error) {
 	}
 
 	return &config{
-		port:    port,
-		streams: streams,
+		port:          port,
+		portThumbnail: portThumbnail,
+		streams:       streams,
 	}, nil
 }
 
@@ -87,8 +93,16 @@ func work(ctx context.Context, logger *logrus.Logger) error {
 		return err
 	}
 
+	baseFolder := os.Getenv("BASE_FOLDER")
+	if baseFolder == "" {
+		baseFolder = "/data"
+	}
+
 	logger.Infof("starting server on port %s", cfg.port)
-	server := proxy.NewServer(logger, cfg.port, cfg.streams)
+	server, err := proxy.NewServer(logger, baseFolder, cfg.port, cfg.portThumbnail, cfg.streams)
+	if err != nil {
+		return err
+	}
 	return server.Run(ctx)
 }
 

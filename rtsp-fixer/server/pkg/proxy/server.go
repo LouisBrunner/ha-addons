@@ -3,6 +3,10 @@ package proxy
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"os"
+	"path/filepath"
+	"sync"
 
 	"github.com/bluenviron/gortsplib/v4"
 	"github.com/bluenviron/gortsplib/v4/pkg/base"
@@ -32,33 +36,65 @@ var (
 const userAgent = "RTSP-Fixer"
 
 type server struct {
-	rtsp    *gortsplib.Server
-	logger  *logrus.Logger
-	streams map[string]*StreamConfig
+	rtsp        *gortsplib.Server
+	httpSrv     *http.Server
+	logger      *logrus.Logger
+	streams     map[string]*StreamConfig
+	thumbsMutex sync.RWMutex
+	thumbs      map[string]*thumbnailData
 }
 
-func NewServer(logger *logrus.Logger, port string, streams []StreamConfig) *server {
+func NewServer(logger *logrus.Logger, baseFolder, port, httpPort string, streams []StreamConfig) (*server, error) {
+	thumbnailFolder := filepath.Join(baseFolder, "thumbnails")
+	err := os.MkdirAll(thumbnailFolder, 0755)
+	if err != nil {
+		return nil, err
+	}
+
 	streamsMap := make(map[string]*StreamConfig, len(streams))
+	thumbsMap := make(map[string]*thumbnailData, len(streams))
 	for _, stream := range streams {
-		streamsMap[fmt.Sprintf("/%s", stream.Name)] = &stream
+		id := fmt.Sprintf("/%s", stream.Name)
+		streamsMap[id] = &stream
+		thumbnailPath := getThumbnailPath(thumbnailFolder, id)
+		thumbnail, err := readThumbnail(thumbnailPath)
+		if err != nil {
+			logger.WithError(err).Warningf("failed to read thumbnail for %q, ignoring", id)
+		}
+		thumbsMap[id] = &thumbnailData{
+			thumbnailPath: thumbnailPath,
+			thumbnail:     thumbnail,
+		}
 	}
 	me := &server{
 		logger:  logger,
 		streams: streamsMap,
+		thumbs:  thumbsMap,
 	}
 	me.rtsp = &gortsplib.Server{
 		Handler:     me,
-		RTSPAddress: fmt.Sprintf(":%s", port),
+		RTSPAddress: fmt.Sprintf("127.0.0.1:%s", port),
 	}
-	return me
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", me.serveThumbnail)
+	me.httpSrv = &http.Server{
+		Addr:    fmt.Sprintf("127.0.0.1:%s", httpPort),
+		Handler: mux,
+	}
+	return me, nil
 }
 
 func (me *server) Run(ctx context.Context) error {
 	go func() {
-		select {
-		case <-ctx.Done():
-			me.logger.Infof("stopping server...")
-			me.rtsp.Close()
+		<-ctx.Done()
+		me.logger.Infof("stopping server...")
+		me.rtsp.Close()
+		me.httpSrv.Close()
+	}()
+	go func() {
+		me.logger.Infof("starting HTTP thumbnail server on %s", me.httpSrv.Addr)
+		if err := me.httpSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			me.logger.WithError(err).Error("HTTP thumbnail server error")
 		}
 	}()
 	return me.rtsp.StartAndWait()
@@ -101,9 +137,6 @@ func (me *server) OnConnClose(ctx *gortsplib.ServerHandlerOnConnCloseCtx) {
 	client, err := getOptionalClient(ctx.Conn)
 	if err != nil {
 		return
-	}
-	if client.stream != nil {
-		client.stream.Close()
 	}
 	client.Close()
 }

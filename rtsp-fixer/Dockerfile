@@ -16,6 +16,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
   go build ./cmd/server
 
 FROM $BUILD_FROM
+RUN apk add --no-cache openh264
 COPY --from=go-build /code/server /server
 COPY run.sh /
 RUN chmod a+x /run.sh

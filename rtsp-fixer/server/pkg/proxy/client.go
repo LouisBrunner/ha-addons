@@ -1,19 +1,42 @@
 package proxy
 
 import (
+	"context"
 	"fmt"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/bluenviron/gortsplib/v4"
 	"github.com/bluenviron/gortsplib/v4/pkg/base"
+	"github.com/bluenviron/gortsplib/v4/pkg/description"
+	"github.com/bluenviron/gortsplib/v4/pkg/format"
+	"github.com/bluenviron/gortsplib/v4/pkg/format/rtph264"
+	"github.com/bluenviron/gortsplib/v4/pkg/headers"
+	"github.com/pion/rtcp"
+	"github.com/pion/rtp"
 )
 
+type thumbnailRecorder struct {
+	h264 *rtph264.Decoder
+}
+
+type thumbnailStream struct {
+	media       *description.Media
+	originalErr error
+}
+
 type client struct {
-	srv *server
-	gortsplib.Client
-	path   string
-	config *StreamConfig
-	stream *gortsplib.ServerStream
+	srv               *server
+	clt               gortsplib.Client
+	path              string
+	config            *StreamConfig
+	stream            *gortsplib.ServerStream
+	thumbnailRecorder thumbnailRecorder
+	thumbnailStream   *thumbnailStream
+	ctx               context.Context
+	cancel            context.CancelFunc
+	closeOnce         sync.Once
 }
 
 func (me *server) createClientFor(path string) (*client, error) {
@@ -22,27 +45,116 @@ func (me *server) createClientFor(path string) (*client, error) {
 		return nil, fmt.Errorf("stream %q not found", path)
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
 	clt := &client{
-		srv: me,
-		Client: gortsplib.Client{
-			Scheme:    stream.URL.Scheme,
-			Host:      stream.URL.Host,
-			UserAgent: userAgent,
+		srv:    me,
+		ctx:    ctx,
+		cancel: cancel,
+		clt: gortsplib.Client{
+			Scheme:       stream.URL.Scheme,
+			Host:         stream.URL.Host,
+			UserAgent:    userAgent,
+			ReadTimeout:  4 * time.Second,
+			WriteTimeout: 4 * time.Second,
 		},
 		path:   path,
 		config: stream,
 	}
-	clt.Client.OnRequest = clt.onRequest
-	clt.Client.OnResponse = clt.onResponse
-	clt.Client.OnTransportSwitch = clt.onTransportSwitch
-	clt.Client.OnPacketsLost = clt.onPacketsLost
-	clt.Client.OnDecodeError = clt.onDecodeError
-	err := clt.Start2()
+	clt.clt.OnRequest = clt.onRequest
+	clt.clt.OnResponse = clt.onResponse
+	clt.clt.OnTransportSwitch = clt.onTransportSwitch
+	clt.clt.OnPacketsLost = clt.onPacketsLost
+	clt.clt.OnDecodeError = clt.onDecodeError
+	err := clt.clt.Start2()
 	if err != nil {
 		return nil, err
 	}
 
 	return clt, nil
+}
+
+func (me *client) Close() error {
+	me.closeOnce.Do(func() {
+		me.cancel()
+		if me.stream != nil {
+			me.stream.Close()
+		}
+		me.clt.Close()
+	})
+	return nil
+}
+
+func (me *client) Describe(url *base.URL) (*description.Session, *base.Response, error) {
+	session, resp, err := me.clt.Describe(url)
+	if err != nil {
+		return me.makeThumbnailStream(err)
+	}
+	return session, resp, err
+}
+
+func (me *client) Setup(url *base.URL, media *description.Media, rtpPort, rtcpPort int) (*base.Response, error) {
+	if me.isThumbnail() {
+		return &base.Response{StatusCode: base.StatusOK}, nil
+	}
+	return me.clt.Setup(url, media, rtpPort, rtcpPort)
+}
+
+func (me *client) Play(rng *headers.Range) (*base.Response, error) {
+	logger := me.srv.logger.WithField("client", me.path)
+
+	if me.isThumbnail() {
+		return me.playThumbnailStream()
+	}
+
+	me.clt.OnPacketRTCPAny(func(m *description.Media, p rtcp.Packet) {
+		err := me.stream.WritePacketRTCP(m, p)
+		if err != nil {
+			logger.WithError(err).Errorf("error writing RTCP packet from client")
+		}
+	})
+	recordThumbnail := true
+	me.clt.OnPacketRTPAny(func(m *description.Media, f format.Format, p *rtp.Packet) {
+		err := me.stream.WritePacketRTP(m, p)
+		if err != nil {
+			logger.WithError(err).Errorf("error writing RTP packet from client")
+		}
+
+		if !recordThumbnail {
+			return
+		}
+
+		record, err := me.recordThumbnail(f, p)
+		if err != nil {
+			logger.WithError(err).Errorf("error recording thumbnail")
+		}
+		if !record {
+			recordThumbnail = false
+			logger.Warnf("skipping thumbnail recording for this stream")
+		}
+	})
+
+	return me.clt.Play(rng)
+}
+
+func (me *client) Pause() (*base.Response, error) {
+	if me.isThumbnail() {
+		return errNotImplemented, nil
+	}
+	return me.clt.Pause()
+}
+
+func (me *client) Record() (*base.Response, error) {
+	if me.isThumbnail() {
+		return errNotImplemented, nil
+	}
+	return me.clt.Record()
+}
+
+func (me *client) Announce(url *base.URL, desc *description.Session) (*base.Response, error) {
+	if me.isThumbnail() {
+		return errNotImplemented, nil
+	}
+	return me.clt.Announce(url, desc)
 }
 
 func (me *client) onRequest(req *base.Request) {
