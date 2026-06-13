@@ -73,12 +73,12 @@ func NewServer(logger *logrus.Logger, baseFolder, port, httpPort string, streams
 	}
 	me.rtsp = &gortsplib.Server{
 		Handler:     me,
-		RTSPAddress: fmt.Sprintf("127.0.0.1:%s", port),
+		RTSPAddress: fmt.Sprintf(":%s", port),
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", me.serveThumbnail)
 	me.httpSrv = &http.Server{
-		Addr:    fmt.Sprintf("127.0.0.1:%s", httpPort),
+		Addr:    fmt.Sprintf(":%s", httpPort),
 		Handler: mux,
 	}
 	return me, nil
@@ -98,6 +98,7 @@ func (me *server) Run(ctx context.Context) error {
 			me.logger.WithError(err).Error("HTTP thumbnail server error")
 		}
 	}()
+	me.logger.Infof("starting RTSP server on %s", me.rtsp.RTSPAddress)
 	return me.rtsp.StartAndWait()
 }
 

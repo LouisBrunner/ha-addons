@@ -58,13 +58,21 @@ func (me *server) serveThumbnail(w http.ResponseWriter, r *http.Request) {
 	thumb, ok := me.thumbs[path]
 	me.thumbsMutex.RUnlock()
 
-	if !ok || thumb.thumbnail == nil {
+	if !ok {
 		http.NotFound(w, r)
 		return
 	}
 
+	me.logger.Debugf("serving thumbnail for %q", path)
+
+	img := thumb.thumbnail
+	if img == nil {
+		me.logger.Warnf("thumbnail for %q not found, using black placeholder", path)
+		img = getFallbackThumbnail()
+	}
+
 	w.Header().Set("Content-Type", "image/jpeg")
-	err := jpeg.Encode(w, thumb.thumbnail, jpegOptions)
+	err := jpeg.Encode(w, img, jpegOptions)
 	if err != nil {
 		me.logger.WithError(err).Errorf("failed to encode thumbnail for %q", path)
 	}
@@ -193,7 +201,7 @@ func (me *client) playThumbnailStream() (*base.Response, error) {
 	img, err := me.srv.getThumbnail(me.path)
 	if err != nil {
 		me.srv.logger.WithError(err).Warnf("no thumbnail for %q, using black placeholder", me.path)
-		img = image.NewRGBA(image.Rect(0, 0, 640, 480))
+		img = getFallbackThumbnail()
 	}
 	img = overlayError(img, me.thumbnailStream.originalErr)
 
@@ -299,6 +307,10 @@ func readThumbnail(inputFile string) (image.Image, error) {
 
 	img, _, err := image.Decode(f)
 	return img, err
+}
+
+func getFallbackThumbnail() image.Image {
+	return image.NewRGBA(image.Rect(0, 0, 640, 480))
 }
 
 func overlayError(img image.Image, err error) image.Image {
