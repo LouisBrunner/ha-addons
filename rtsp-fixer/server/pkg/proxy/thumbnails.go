@@ -192,6 +192,7 @@ func (me *client) monitorUpstream() {
 func (me *client) playThumbnailStream() (*base.Response, error) {
 	img, err := me.srv.getThumbnail(me.path)
 	if err != nil {
+		me.srv.logger.WithError(err).Warnf("no thumbnail for %q, using black placeholder", me.path)
 		img = image.NewRGBA(image.Rect(0, 0, 640, 480))
 	}
 	img = overlayError(img, me.thumbnailStream.originalErr)
