@@ -1,6 +1,6 @@
 ## 0.0.5
 
-Fix addon updates not being detected by HA Supervisor. The upstream builder actions changed per-arch image naming from `{image}-{arch}` to `{arch}-{image}`, breaking the match with the `{arch}` placeholder in config.yaml. Forked the actions locally to restore the original naming, and switched to a single multi-arch manifest image in config.yaml.
+Fix addon update not being detected due to a change of how upstream actions build the Docker image name.
 
 ## 0.0.4
 

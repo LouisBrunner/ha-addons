@@ -40,8 +40,7 @@ runs:
               exit 1
               ;;
           esac
-          # FIXME: upstream uses ${arch}-${IMAGE_NAME} but HA Supervisor resolves the {arch} placeholder
-          # in config.yaml image field and expects the suffix form: ${IMAGE_NAME}-${arch}
+          # FIXME: previous versions used ${IMAGE_NAME}-${arch} but the new action does the reverse, we patch it here for backwards compatibility
           matrix=$(jq -c --arg arch "$arch" --arg os "$os" --arg image "${REGISTRY_PREFIX}/${IMAGE_NAME}-${arch}" \
             '.include += [{arch: $arch, os: $os, image: $image}]' <<< "${matrix}")
         done

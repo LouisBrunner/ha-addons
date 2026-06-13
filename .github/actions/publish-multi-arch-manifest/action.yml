@@ -68,8 +68,7 @@ runs:
 
         source_images=()
         for arch in $(jq -r '.[]' <<< "${ARCHITECTURES}"); do
-          # FIXME: upstream uses ${arch}-${IMAGE_NAME} but HA Supervisor resolves the {arch} placeholder
-          # in config.yaml image field and expects the suffix form: ${IMAGE_NAME}-${arch}
+          # FIXME: previous versions used ${IMAGE_NAME}-${arch} but the new action does the reverse, we patch it here for backwards compatibility
           source_images+=("${REGISTRY_PREFIX}/${IMAGE_NAME}-${arch}:${image_tags[0]}")
         done
 
