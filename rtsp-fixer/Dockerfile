@@ -1,4 +1,4 @@
-ARG BUILD_FROM=stop-complaining
+ARG BUILD_FROM=ghcr.io/home-assistant/base:3.23
 
 FROM golang:1.26.4-alpine3.24 AS go-builder
 RUN apk add --no-cache gcc musl-dev
