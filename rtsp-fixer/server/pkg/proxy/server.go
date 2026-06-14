@@ -42,6 +42,7 @@ type server struct {
 	streams     map[string]*StreamConfig
 	thumbsMutex sync.RWMutex
 	thumbs      map[string]*thumbnailData
+	pubSub      *pubSub
 }
 
 func NewServer(logger *logrus.Logger, baseFolder, port, httpPort string, streams []StreamConfig) (*server, error) {
@@ -70,6 +71,7 @@ func NewServer(logger *logrus.Logger, baseFolder, port, httpPort string, streams
 		logger:  logger,
 		streams: streamsMap,
 		thumbs:  thumbsMap,
+		pubSub:  newPubSub(),
 	}
 	me.rtsp = &gortsplib.Server{
 		Handler:     me,
@@ -91,6 +93,7 @@ func (me *server) Run(ctx context.Context) error {
 		me.rtsp.Close()
 		me.httpSrv.Close()
 	}()
+	go me.runMonitor(ctx)
 	go func() {
 		me.logger.Infof("starting HTTP thumbnail server on %s", me.httpSrv.Addr)
 		err := me.httpSrv.ListenAndServe()

@@ -1,6 +1,6 @@
 name: "RTSP Stream Fixer"
 description: "Fixes the non-standard RTSP streams so they can be used with FFMpeg"
-version: "0.0.5"
+version: "0.0.6"
 slug: "rtsp-stream-fixer"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/rtsp-fixer"
 init: false

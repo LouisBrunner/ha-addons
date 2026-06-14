@@ -17,6 +17,8 @@ import (
 	"github.com/pion/rtp"
 )
 
+const connTimeout = 4 * time.Second
+
 type thumbnailRecorder struct {
 	h264 *rtph264.Decoder
 }
@@ -54,8 +56,8 @@ func (me *server) createClientFor(path string) (*client, error) {
 			Scheme:       stream.URL.Scheme,
 			Host:         stream.URL.Host,
 			UserAgent:    userAgent,
-			ReadTimeout:  4 * time.Second,
-			WriteTimeout: 4 * time.Second,
+			ReadTimeout:  connTimeout,
+			WriteTimeout: connTimeout,
 		},
 		path:   path,
 		config: stream,
@@ -85,8 +87,20 @@ func (me *client) Close() error {
 }
 
 func (me *client) Describe(url *base.URL) (*description.Session, *base.Response, error) {
+	me.srv.thumbsMutex.RLock()
+	thumb, ok := me.srv.thumbs[me.path]
+	var connErr error
+	if ok {
+		connErr = thumb.connErr
+	}
+	me.srv.thumbsMutex.RUnlock()
+
+	if connErr != nil {
+		return me.makeThumbnailStream(connErr)
+	}
 	session, resp, err := me.clt.Describe(url)
 	if err != nil {
+		me.srv.updateConnErr(me.path, err)
 		return me.makeThumbnailStream(err)
 	}
 	return session, resp, err

@@ -15,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bluenviron/gortsplib/v4"
 	"github.com/bluenviron/gortsplib/v4/pkg/base"
 	"github.com/bluenviron/gortsplib/v4/pkg/description"
 	"github.com/bluenviron/gortsplib/v4/pkg/format"
@@ -37,6 +36,7 @@ type thumbnailData struct {
 	lastCapture   time.Time
 	thumbnailPath string
 	thumbnail     image.Image
+	connErr       error
 }
 
 func (me *server) shouldRecordThumbnail(path string) bool {
@@ -56,6 +56,12 @@ func (me *server) serveThumbnail(w http.ResponseWriter, r *http.Request) {
 
 	me.thumbsMutex.RLock()
 	thumb, ok := me.thumbs[path]
+	var img image.Image
+	var connErr error
+	if ok {
+		img = thumb.thumbnail
+		connErr = thumb.connErr
+	}
 	me.thumbsMutex.RUnlock()
 
 	if !ok {
@@ -65,10 +71,12 @@ func (me *server) serveThumbnail(w http.ResponseWriter, r *http.Request) {
 
 	me.logger.Debugf("serving thumbnail for %q", path)
 
-	img := thumb.thumbnail
 	if img == nil {
 		me.logger.Warnf("thumbnail for %q not found, using black placeholder", path)
 		img = getFallbackThumbnail()
+	}
+	if connErr != nil {
+		img = overlayError(img, connErr)
 	}
 
 	w.Header().Set("Content-Type", "image/jpeg")
@@ -161,45 +169,12 @@ func (me *client) makeThumbnailStream(originalErr error) (*description.Session, 
 		originalErr: originalErr,
 		media:       media,
 	}
-	go me.monitorUpstream()
 	return desc, &base.Response{StatusCode: base.StatusOK}, nil
-}
-
-func (me *client) monitorUpstream() {
-	ticker := time.NewTicker(upstreamMonitorInterval)
-	defer ticker.Stop()
-	url := me.config.URL
-	for {
-		select {
-		case <-me.ctx.Done():
-			return
-		case <-ticker.C:
-			probe := gortsplib.Client{
-				Scheme:       url.Scheme,
-				Host:         url.Host,
-				UserAgent:    userAgent,
-				ReadTimeout:  4 * time.Second,
-				WriteTimeout: 4 * time.Second,
-			}
-			err := probe.Start2()
-			if err != nil {
-				continue
-			}
-			_, _, err = probe.Describe((*base.URL)(&url))
-			probe.Close()
-			if err == nil {
-				me.srv.logger.Infof("stream %q came back online, closing thumbnail stream", me.path)
-				me.Close()
-				return
-			}
-			me.srv.logger.WithError(err).Debugf("stream %q still offline", me.path)
-		}
-	}
 }
 
 func (me *client) playThumbnailStream() (*base.Response, error) {
 	img, err := me.srv.getThumbnail(me.path)
-	if err != nil {
+	if img == nil {
 		me.srv.logger.WithError(err).Warnf("no thumbnail for %q, using black placeholder", me.path)
 		img = getFallbackThumbnail()
 	}
@@ -217,19 +192,32 @@ func (me *client) playThumbnailStream() (*base.Response, error) {
 	}
 
 	jpegBytes := buf.Bytes()
+	ch := me.srv.pubSub.subscribe(me.path)
 	go func() {
+		defer me.srv.pubSub.unsubscribe(me.path, ch)
 		ticker := time.NewTicker(time.Second)
 		defer ticker.Stop()
 
-		for range ticker.C {
-			pkts, err := enc.Encode(jpegBytes)
-			if err != nil {
-				me.srv.logger.WithError(err).Errorf("thumbnail: failed to encode MJPEG frame")
+		for {
+			select {
+			case <-me.ctx.Done():
 				return
-			}
-			for _, pkt := range pkts {
-				if err = me.stream.WritePacketRTP(me.thumbnailStream.media, pkt); err != nil {
+			case connErr := <-ch:
+				if connErr == nil {
+					me.srv.logger.Infof("stream %q came back online, closing thumbnail stream", me.path)
+					me.Close()
 					return
+				}
+			case <-ticker.C:
+				pkts, err := enc.Encode(jpegBytes)
+				if err != nil {
+					me.srv.logger.WithError(err).Errorf("thumbnail: failed to encode MJPEG frame")
+					return
+				}
+				for _, pkt := range pkts {
+					if err = me.stream.WritePacketRTP(me.thumbnailStream.media, pkt); err != nil {
+						return
+					}
 				}
 			}
 		}
