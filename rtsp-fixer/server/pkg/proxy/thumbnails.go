@@ -202,6 +202,8 @@ func (me *client) playThumbnailStream() (*base.Response, error) {
 		ticker := time.NewTicker(time.Second)
 		defer ticker.Stop()
 
+		frames := uint32(0)
+
 		for {
 			select {
 			case <-me.ctx.Done():
@@ -219,10 +221,15 @@ func (me *client) playThumbnailStream() (*base.Response, error) {
 					return
 				}
 				for _, pkt := range pkts {
-					if err = me.stream.WritePacketRTP(me.thumbnailStream.media, pkt); err != nil {
+					pkt.Timestamp = frames * 90000
+					me.srv.logger.Debugf("thumbnail: sending RTP packet with seq=%d ts=%d marker=%v", pkt.SequenceNumber, pkt.Timestamp, pkt.Marker)
+					err := me.stream.WritePacketRTP(me.thumbnailStream.media, pkt)
+					if err != nil {
+						me.srv.logger.WithError(err).Errorf("thumbnail: failed to write RTP packet")
 						return
 					}
 				}
+				frames += 1
 			}
 		}
 	}()

@@ -1,3 +1,7 @@
+## 0.0.7
+
+Fix race condition when saving thumbnails and properly give timestamps in the thumbnail stream (ffmpeg compatibility).
+
 ## 0.0.6
 
 Improve offline detection for streams and serve thumbnails with error feedback.
