@@ -1,3 +1,7 @@
+## 0.0.6
+
+Improve offline detection for streams and serve thumbnails with error feedback.
+
 ## 0.0.5
 
 Fix addon update not being detected due to a change of how upstream actions build the Docker image name.
