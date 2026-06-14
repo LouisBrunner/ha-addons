@@ -40,14 +40,18 @@ type thumbnailData struct {
 }
 
 func (me *server) shouldRecordThumbnail(path string) bool {
-	me.thumbsMutex.RLock()
-	defer me.thumbsMutex.RUnlock()
+	me.thumbsMutex.Lock()
+	defer me.thumbsMutex.Unlock()
 
 	thumb, ok := me.thumbs[path]
 	if !ok {
 		return false
 	}
-	return time.Since(thumb.lastCapture) >= thumbnailInterval
+	if time.Since(thumb.lastCapture) < thumbnailInterval {
+		return false
+	}
+	thumb.lastCapture = time.Now()
+	return true
 }
 
 func (me *server) serveThumbnail(w http.ResponseWriter, r *http.Request) {
