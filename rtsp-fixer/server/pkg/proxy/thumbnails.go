@@ -37,6 +37,18 @@ type thumbnailData struct {
 	lastCapture   time.Time
 	thumbnailPath string
 	thumbnail     image.Image
+	offline       bool
+	offlineErr    error
+}
+
+func (me *server) isOffline(path string) (bool, error) {
+	me.thumbsMutex.RLock()
+	defer me.thumbsMutex.RUnlock()
+	thumb, ok := me.thumbs[path]
+	if !ok {
+		return false, nil
+	}
+	return thumb.offline, thumb.offlineErr
 }
 
 func (me *server) shouldRecordThumbnail(path string) bool {
@@ -149,6 +161,12 @@ func (me *server) saveThumbnailInternal(path string, getImage func() (image.Imag
 
 func (me *client) makeThumbnailStream(originalErr error) (*description.Session, *base.Response, error) {
 	me.srv.logger.WithError(originalErr).Warnf("stream %q appears to be offline, creating thumbnail stream", me.path)
+	me.srv.thumbsMutex.Lock()
+	if thumb, ok := me.srv.thumbs[me.path]; ok {
+		thumb.offline = true
+		thumb.offlineErr = originalErr
+	}
+	me.srv.thumbsMutex.Unlock()
 	forma := &format.MJPEG{}
 	media := &description.Media{
 		Type:    description.MediaTypeVideo,
@@ -189,6 +207,12 @@ func (me *client) monitorUpstream() {
 			probe.Close()
 			if err == nil {
 				me.srv.logger.Infof("stream %q came back online, closing thumbnail stream", me.path)
+				me.srv.thumbsMutex.Lock()
+				if thumb, ok := me.srv.thumbs[me.path]; ok {
+					thumb.offline = false
+					thumb.offlineErr = nil
+				}
+				me.srv.thumbsMutex.Unlock()
 				me.Close()
 				return
 			}

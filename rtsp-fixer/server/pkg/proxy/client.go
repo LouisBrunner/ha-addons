@@ -85,6 +85,10 @@ func (me *client) Close() error {
 }
 
 func (me *client) Describe(url *base.URL) (*description.Session, *base.Response, error) {
+	if offline, offlineErr := me.srv.isOffline(me.path); offline {
+		me.srv.logger.Warnf("stream %q is known offline, skipping upstream probe", me.path)
+		return me.makeThumbnailStream(offlineErr)
+	}
 	session, resp, err := me.clt.Describe(url)
 	if err != nil {
 		return me.makeThumbnailStream(err)
