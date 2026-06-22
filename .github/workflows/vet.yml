@@ -15,7 +15,7 @@ jobs:
     outputs:
       addons: ${{ steps.addons.outputs.addons_list }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - id: addons
         uses: home-assistant/actions/helpers/find-addons@e91ad1948e57189485b9c1ad608af0c303946f89
@@ -28,7 +28,7 @@ jobs:
       matrix:
         path: ${{ fromJson(needs.find.outputs.addons) }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Go
         uses: actions/setup-go@v6
