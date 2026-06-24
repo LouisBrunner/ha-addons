@@ -78,7 +78,8 @@ func NewServer(logger *logrus.Logger, baseFolder, port, httpPort string, streams
 		RTSPAddress: fmt.Sprintf(":%s", port),
 	}
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", me.serveThumbnail)
+	mux.HandleFunc("GET /", me.serveThumbnail)
+	mux.HandleFunc("POST /", me.resetThumbnail)
 	me.httpSrv = &http.Server{
 		Addr:    fmt.Sprintf(":%s", httpPort),
 		Handler: mux,

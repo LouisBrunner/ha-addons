@@ -1,3 +1,7 @@
+## 0.0.8
+
+Add POST endpoint on the thumbnail URI to reset the capture timeout, forcing a new screenshot on the next frame.
+
 ## 0.0.7
 
 Fix race condition when saving thumbnails and properly give timestamps in the thumbnail stream (ffmpeg compatibility).

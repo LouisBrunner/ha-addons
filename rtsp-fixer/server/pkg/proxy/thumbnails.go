@@ -54,9 +54,32 @@ func (me *server) shouldRecordThumbnail(path string) bool {
 	return true
 }
 
+func thumbnailPath(r *http.Request) string {
+	return fmt.Sprintf("/%s", strings.TrimPrefix(r.URL.Path, "/"))
+}
+
+func (me *server) resetThumbnail(w http.ResponseWriter, r *http.Request) {
+	path := thumbnailPath(r)
+
+	me.thumbsMutex.Lock()
+	thumb, ok := me.thumbs[path]
+	if ok {
+		thumb.lastCapture = time.Time{}
+		me.thumbs[path] = thumb
+	}
+	me.thumbsMutex.Unlock()
+
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	me.logger.Infof("thumbnail timeout reset for %q", path)
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (me *server) serveThumbnail(w http.ResponseWriter, r *http.Request) {
-	name := strings.TrimPrefix(r.URL.Path, "/")
-	path := fmt.Sprintf("/%s", name)
+	path := thumbnailPath(r)
 
 	me.thumbsMutex.RLock()
 	thumb, ok := me.thumbs[path]
