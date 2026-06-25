@@ -2,35 +2,38 @@ name: Lint
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
   schedule:
     - cron: "0 0 * * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   find:
     name: Find add-ons
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       addons: ${{ steps.addons.outputs.addons_list }}
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout the repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - id: addons
         uses: home-assistant/actions/helpers/find-addons@e91ad1948e57189485b9c1ad608af0c303946f89
 
   lint:
     name: Lint add-on ${{ matrix.path }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: find
     strategy:
       matrix:
         path: ${{ fromJson(needs.find.outputs.addons) }}
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout the repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - uses: frenck/action-addon-linter@v2.21
         with:

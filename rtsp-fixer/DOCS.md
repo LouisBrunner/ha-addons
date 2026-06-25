@@ -12,6 +12,7 @@ For example, if you have a stream available at rtsp://192.168.1.10:554/stream wh
   fix_force_tcp_in_transport: true
 ```
 
-You can then use `rtsp://YOUR_HOMEASSISTANT_HOST:6666/first` (note that `first` needs to match the name of your stream) in your integration and the server will automatically fix your stream so it works for HomeAssistant!
+You can then use `rtsp://YOUR_HOMEASSISTANT_HOST:6666/first` (note that `first` needs to match the name of your stream)
+in your integration and the server will automatically fix your stream so it works for HomeAssistant!
 
 Thumbnails will be available at `http://YOUR_HOMEASSISTANT_HOST:6667/thumbnails/first.jpg` (if supported by the upstream).

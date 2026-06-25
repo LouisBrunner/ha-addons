@@ -1,3 +1,5 @@
+# Releases
+
 ## 0.0.8
 
 Add POST endpoint on the thumbnail URI to reset the capture timeout, forcing a new screenshot on the next frame.
@@ -24,7 +26,8 @@ Fix servers binding to 127.0.0.1, which prevented HA addon port mapping from wor
 
 ## 0.0.2
 
-Serves the latest recorded frame when the stream is not available. This reduces the logging in Home Assistant when your camera is often off.
+Serves the latest recorded frame when the stream is not available.
+This reduces the logging in Home Assistant when your camera is often off.
 
 ## 0.0.1
 

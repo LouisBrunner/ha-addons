@@ -4,4 +4,4 @@
 
 ## Addons
 
- * [RTSP Stream Fixer](./rtsp-fixer): fix non-standard RTSP streams for your legacy cameras
+- [RTSP Stream Fixer](./rtsp-fixer): fix non-standard RTSP streams for your legacy cameras
