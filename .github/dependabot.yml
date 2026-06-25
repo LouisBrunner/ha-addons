@@ -1,29 +1,24 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: /
+    directory: "/"
     schedule:
-      interval: weekly
+      interval: "weekly"
     groups:
-      actions-deps:
-        patterns:
-          - "*"
-
-  - package-ecosystem: gomod
-    directory: /rtsp-fixer/server
-    schedule:
-      interval: monthly
-    groups:
-      security-updates:
+      actions-security:
         applies-to: security-updates
         patterns:
           - "*"
-      major-updates:
+      actions-major:
         applies-to: version-updates
         update-types:
           - "major"
-      minor-updates:
+        patterns:
+          - "*"
+      actions-minor:
         applies-to: version-updates
         update-types:
           - "minor"
           - "patch"
+        patterns:
+          - "*"
