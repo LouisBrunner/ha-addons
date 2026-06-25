@@ -68,7 +68,8 @@ runs:
 
         source_images=()
         for arch in $(jq -r '.[]' <<< "${ARCHITECTURES}"); do
-          # FIXME: previous versions used ${IMAGE_NAME}-${arch} but the new action does the reverse, we patch it here for backwards compatibility
+          # FIXME: previous versions used ${IMAGE_NAME}-${arch} but the new action does the reverse,
+          # we patch it here for backwards compatibility
           source_images+=("${REGISTRY_PREFIX}/${IMAGE_NAME}-${arch}:${image_tags[0]}")
         done
 
