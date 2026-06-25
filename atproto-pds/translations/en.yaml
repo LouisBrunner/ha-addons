@@ -1,0 +1,14 @@
+---
+configuration:
+  hostname:
+    name: Hostname
+    description: >-
+      Public hostname of your PDS, e.g. pds.mydomain.com
+  admin_password:
+    name: Admin Password
+    description: >-
+      Password for the PDS admin API
+  invite_required:
+    name: Invite Required
+    description: >-
+      Require invite codes to create new accounts

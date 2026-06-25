@@ -1,0 +1,21 @@
+name: "Tangled Knot"
+description: "Self-hosted Tangled knot server for git repository hosting on the AT Protocol"
+version: "0.0.1"
+slug: "tangled-knot"
+url: "https://github.com/LouisBrunner/ha-addons/blob/main/tangled-knot"
+init: false
+arch:
+  - aarch64
+  - amd64
+options:
+  hostname: ""
+  owner_did: ""
+schema:
+  hostname: str
+  owner_did: str
+ports:
+  5555/tcp: null
+  22/tcp: 2525
+ports_description:
+  5555/tcp: "Knot (HTTP)"
+  22/tcp: "Knot (SSH)"

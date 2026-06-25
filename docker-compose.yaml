@@ -10,6 +10,9 @@ services:
       - docker-data:/var/lib/docker
       - supervisor-data:/mnt/supervisor
     ports:
+      - "2525:22"
+      - "3000:3000"
+      - "5555:5555"
       - "6666:6666"
       - "6667:6667"
       - "7123:8123"

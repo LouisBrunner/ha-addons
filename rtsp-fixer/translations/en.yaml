@@ -2,9 +2,13 @@
 configuration:
   debug:
     name: Debug Mode
-    decription: >-
+    description: >-
       Enables debug logging, used mostly for development or debugging purposes
   streams:
     name: Streams
     description: >-
       A list of streams and how to fix them. Check the documentation for an example.
+network:
+  6666/tcp: RTSP proxy stream (TCP)
+  6666/udp: RTSP proxy stream (UDP)
+  6667/tcp: Thumbnails (HTTP)

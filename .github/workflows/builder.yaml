@@ -1,7 +1,7 @@
 name: Builder
 
 env:
-  MONITORED_FILES: "config.yaml Dockerfile server"
+  MONITORED_FILES: "config.yaml Dockerfile server run.sh"
 
 on:
   push:

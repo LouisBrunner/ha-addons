@@ -1,0 +1,21 @@
+name: "AT Protocol PDS"
+description: "Self-hosted AT Protocol Personal Data Server for Bluesky and the atproto ecosystem"
+version: "0.0.1"
+slug: "atproto-pds"
+url: "https://github.com/LouisBrunner/ha-addons/blob/main/atproto-pds"
+init: false
+arch:
+  - aarch64
+  - amd64
+options:
+  hostname: ""
+  admin_password: ""
+  invite_required: true
+schema:
+  hostname: str
+  admin_password: password
+  invite_required: bool?
+ports:
+  3000/tcp: null
+ports_description:
+  3000/tcp: "PDS (HTTP)"

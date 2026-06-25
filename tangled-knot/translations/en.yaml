@@ -1,0 +1,10 @@
+---
+configuration:
+  hostname:
+    name: Hostname
+    description: >-
+      Public hostname of the knot, e.g. git.mydomain.com
+  owner_did:
+    name: Owner DID
+    description: >-
+      Your AT Protocol DID, e.g. did:plc:xxxxxxxxxxxx
