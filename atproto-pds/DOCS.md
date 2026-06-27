@@ -57,16 +57,21 @@ These are set by the addon and cannot be overridden via the UI at the moment:
 ## First-time account creation
 
 ```sh
+goat pds admin --admin-password YOUR_ADMIN_PASSWORD --pds-host https://pds.mydomain.com account create --email you@example.com --handle you.pds.mydomain.com --password yourpassword
+# or
+pdsadmin account create you@example.com you.pds.mydomain.com
+# or (INVITE_CODE is required if `invite_required` is `true`, otherwise omit it)
 curl -X POST https://pds.mydomain.com/xrpc/com.atproto.server.createAccount \
   -H "Content-Type: application/json" \
   -d '{
     "email": "you@example.com",
     "handle": "you.pds.mydomain.com",
-    "password": "yourpassword"
+    "password": "yourpassword",
+    "inviteCode": "INVITE_CODE"
   }'
 ```
 
-If `invite_required` is `true`, first generate an invite code via the admin API:
+If using `curl` directly and `invite_required` is `true`, first generate an invite code via the admin API:
 
 ```sh
 curl -X POST https://pds.mydomain.com/xrpc/com.atproto.server.createInviteCode \
@@ -74,6 +79,10 @@ curl -X POST https://pds.mydomain.com/xrpc/com.atproto.server.createInviteCode \
   -H "Content-Type: application/json" \
   -d '{"useCount": 1}'
 ```
+
+> [!NOTE]
+> If you want to use [`pdsadmin`](https://github.com/bluesky-social/pds/blob/main/pdsadmin.sh),
+> you will need to create a `/pds/pds.env` file (or override `PDS_ENV_FILE`) and set your `PDS_HOSTNAME=pds.mydomain.com` and `PDS_ADMIN_PASSWORD=yourpassword`.
 
 ## Custom domain as handle
 
