@@ -1,7 +1,7 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/base:3.23
 
 FROM golang:1.26.4-alpine3.24 AS go-builder
-RUN apk add --no-cache gcc musl-dev
+RUN apk add --no-cache gcc==15.2.0-r5 musl-dev==1.2.6-r2
 WORKDIR /code
 RUN go env
 
@@ -17,8 +17,6 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
   go build ./cmd/server
 
 FROM $BUILD_FROM
-RUN apk add --no-cache openh264
+RUN apk add --no-cache openh264==2.6.0-r0
 COPY --from=go-build /code/server /server
-COPY run.sh /
-RUN chmod a+x /run.sh
 CMD ["/run.sh"]

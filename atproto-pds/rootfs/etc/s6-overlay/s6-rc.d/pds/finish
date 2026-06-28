@@ -1,0 +1,7 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+
+readonly exit_code_service="${1}"
+readonly exit_code_signal="${2}"
+
+exec /etc/s6-overlay/scripts/on_crash.sh "${exit_code_service}" "${exit_code_signal}" pds

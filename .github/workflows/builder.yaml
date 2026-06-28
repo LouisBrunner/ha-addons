@@ -1,7 +1,7 @@
 name: Builder
 
 env:
-  MONITORED_FILES: "config.yaml Dockerfile server"
+  MONITORED_FILES: "config.yaml Dockerfile rootfs server run.sh"
 
 on:
   push:
@@ -23,7 +23,9 @@ jobs:
       changed_addons: ${{ steps.filter.outputs.changed_addons }}
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Get changed files
         id: changed_files
@@ -42,7 +44,7 @@ jobs:
           changed_addons=()
 
           if [[ "${CHANGED_FILES}" =~ \.github/workflows/(builder|build-addon)\.yaml ]]; then
-            changed_addons=(${ADDONS})
+            read -ra changed_addons <<< "${ADDONS}"
           else
             for addon in ${ADDONS}; do
               for file in ${MONITORED_FILES}; do
