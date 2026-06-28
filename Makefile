@@ -1,3 +1,5 @@
+TARGET ?= unknown
+
 INSIDE_DOCKER = $(shell stat /.indocker 2>&1 >/dev/null && echo 1 || echo 0)
 ifeq ($(INSIDE_DOCKER),1)
 endif
@@ -11,8 +13,6 @@ else
 endif
 .PHONY: setup
 
-TARGET ?= unknown
-
 deploy-local:
 	scp -rP 2020 $(TARGET) root@homeassistant.local:/homeassistant/apps
 .PHONY: deploy-local
@@ -24,6 +24,26 @@ devcontainer-start:
 devcontainer:
 	docker compose exec -it devcontainer bash
 .PHONY: devcontainer
+
+dev:
+ifeq ($(INSIDE_DOCKER),1)
+	@echo "> Unsupported inside the container"
+else
+	@echo "# Developing $(TARGET)"
+	@make TARGET=$(TARGET) rebuild
+	@echo "# Watching for changes..."
+	@fswatch $(TARGET) | xargs -I{} make TARGET=$(TARGET) rebuild
+endif
+.PHONY: dev
+
+rebuild:
+ifeq ($(INSIDE_DOCKER),1)
+	@echo -n '> '
+	ha apps rebuild local_$(TARGET) && ha apps start local_$(TARGET)
+else
+	docker compose exec -T devcontainer make TARGET=$(TARGET) rebuild
+endif
+.PHONY: rebuild
 
 logs:
 ifeq ($(INSIDE_DOCKER),1)

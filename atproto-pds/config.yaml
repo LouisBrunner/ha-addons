@@ -1,8 +1,9 @@
 name: "AT Protocol PDS"
-description: "Self-hosted AT Protocol Personal Data Server for Bluesky and the atproto ecosystem"
+description: "Self-hosted AT Protocol Personal Data Server for Bluesky and the Atmosphere"
 version: "0.0.1"
 slug: "atproto-pds"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/atproto-pds"
+# image: ghcr.io/louisbrunner/ha-atproto-pds
 init: false
 arch:
   - aarch64
@@ -10,12 +11,26 @@ arch:
 options:
   hostname: ""
   admin_password: ""
+  smtp_url: ""
   invite_required: true
+  gatekeeper:
+    enabled: true
+    captcha:
+      enabled: false
 schema:
   hostname: str
   admin_password: password
+  smtp_url: str
+  smtp_from: str?
   invite_required: bool?
+  recovery_did_key: str?
+  gatekeeper:
+    enabled: bool?
+    captcha:
+      enabled: bool?
+      hcaptcha_site_key: str?
+      hcaptcha_secret_key: str?
+    only_migrations: bool?
+  debug: bool?
 ports:
   3000/tcp: null
-ports_description:
-  3000/tcp: "PDS (HTTP)"

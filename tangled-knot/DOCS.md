@@ -5,7 +5,7 @@ Self-hosted [Tangled](https://tangled.org) knot server for git repository hostin
 ## Prerequisites
 
 - A public domain pointing to your Home Assistant then HTTPS routing using Cloudflare tunnel, Nginx reverse proxy, etc.
-- A running AT Protocol PDS (the [AT Protocol PDS addon](../atproto-pds) or any other PDS)
+- A running AT Protocol PDS (the [AT Protocol PDS app](../atproto-pds) or any other PDS)
 - Your DID — find it at `https://your-pds-hostname/xrpc/com.atproto.identity.resolveHandle?handle=yourhandle`
 
 ## Configuration
@@ -26,7 +26,7 @@ HTTP is not exposed to the host by default as it is assumed that you will be usi
 
 ## Persistent data
 
-The following paths are stored in `/data` and survive addon restarts and updates:
+The following paths are stored in `/data` and survive app restarts and updates:
 
 | Path                  | Contents                                       |
 | --------------------- | ---------------------------------------------- |
@@ -36,4 +36,4 @@ The following paths are stored in `/data` and survive addon restarts and updates
 
 ## Registering your knot with Tangled
 
-After starting the addon, register it [here](https://tangled.org/settings/knots) so Tangled knows about it.
+After starting the app, register it [here](https://tangled.org/settings/knots) so Tangled knows about it.

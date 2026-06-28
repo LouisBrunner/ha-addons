@@ -12,3 +12,51 @@ configuration:
     name: Invite Required
     description: >-
       Require invite codes to create new accounts
+  recovery_did_key:
+    name: Recovery DID Key (Recommended)
+    description: >-
+      Public key that is added to the users DID.
+      The corresponding private key can be used to recover user accounts in case of a catastrophic loss of data.
+      Use `goat key generate` or similar to generate, store the private key securely and separately.
+  smtp_url:
+    name: SMTP URL
+    description: >-
+      URL of the SMTP server to use for sending emails, e.g. smtps://account:password@provider:port
+  smtp_from:
+    name: SMTP From
+    description: >-
+      Email address to use as the sender of emails sent by the SMTP server, defaults to no-reply@hostname if not specified.
+  gatekeeper:
+    name: Gatekeeper configuration
+    fields:
+      enabled:
+        name: Enable Gatekeeper (Recommended)
+        description: >-
+          Enables the gatekeeper service providing 2FA, Captcha and other security measures
+      captcha:
+        name: Captcha configuration
+        fields:
+          enabled:
+            name: Enable Captcha
+            description: >-
+              Enables the Captcha service for Gatekeeper
+          hcaptcha_site_key:
+            name: hCaptcha Site Key (required if Captcha is enabled)
+            description: >-
+              hCaptcha site key for the Captcha service
+          hcaptcha_secret_key:
+            name: hCaptcha Secret Key (required if Captcha is enabled)
+            description: >-
+              hCaptcha secret key for the Captcha service
+      only_migrations:
+        name: Only Migrations
+        description: >-
+          Enables only migrations, disabling account creation
+  debug:
+    name: Debug Mode
+    description: >-
+      Enables debug logging, used mostly for development or debugging purposes
+network:
+  3000/tcp: PDS / Caddy (when Gatekeeper is enabled) (HTTP)
+  3001/tcp: PDS (TCP) [when Gatekeeper is enabled]
+  3002/tcp: Gateway (HTTP) [when Gatekeeper is enabled]

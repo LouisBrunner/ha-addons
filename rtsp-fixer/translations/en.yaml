@@ -8,6 +8,19 @@ configuration:
     name: Streams
     description: >-
       A list of streams and how to fix them. Check the documentation for an example.
+    fields:
+      name:
+        name: Name
+        description: >-
+          The name of the stream, will be used as the identifier in URL, e.g. rstp://{slup}-rtsp-stream-fixer:6666/my-name
+      url:
+        name: Upstream URL
+        description: >-
+          The URL of the stream to proxy and fix.
+      fix_force_tcp_in_transport:
+        name: "[Fix] Force TCP in Transport"
+        description: >-
+          Force TCP in the Transport header, fixes streams that cause `Nonmatching transport in server reply` (HA reports it as `Invalid data found when processing input`).
 network:
   6666/tcp: RTSP proxy stream (TCP)
   6666/udp: RTSP proxy stream (UDP)

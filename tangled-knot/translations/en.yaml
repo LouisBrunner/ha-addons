@@ -8,3 +8,6 @@ configuration:
     name: Owner DID
     description: >-
       Your AT Protocol DID, e.g. did:plc:xxxxxxxxxxxx
+network:
+  5555/tcp: "Knot (HTTP)"
+  22/tcp: "Git (SSH)"
