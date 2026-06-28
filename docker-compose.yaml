@@ -12,7 +12,8 @@ services:
                  > "/usr/local/lib/pdsadmin/$${cmd}.sh"; \
              done \
           && sed -i 's|PDSADMIN_BASE_URL=.*|PDSADMIN_BASE_URL="file:///usr/local/lib/pdsadmin"|' /usr/local/bin/pdsadmin \
-          && chmod +x /usr/local/bin/pdsadmin
+          && chmod +x /usr/local/bin/pdsadmin \
+          && sed -i 's/docker system prune -f/docker container prune -f \&\& docker network prune -f \&\& docker image prune -f/' /usr/bin/supervisor_run
     configs:
       - source: indocker
         target: /.indocker
