@@ -79,11 +79,30 @@ There are also a few unset ones which can be added in the future:
 
 ## First-time account creation
 
+Users can create accounts via the built-in UI at `https://pds.mydomain.com/account` — they will be prompted for an invite code if `invite_required` is `true`.
+
+### Generating invite codes
+
+```sh
+goat pds admin --admin-password YOUR_ADMIN_PASSWORD --pds-host https://pds.mydomain.com create-invites
+# or
+pdsadmin create-invite-code
+# or
+curl -X POST https://pds.mydomain.com/xrpc/com.atproto.server.createInviteCode \
+  -u "admin:YOUR_ADMIN_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{"useCount": 1}'
+```
+
+### Creating accounts via CLI
+
+`goat` and `pdsadmin` handle invite codes automatically. With `curl` you must supply one explicitly if `invite_required` is `true`:
+
 ```sh
 goat pds admin --admin-password YOUR_ADMIN_PASSWORD --pds-host https://pds.mydomain.com account create --email you@example.com --handle you.pds.mydomain.com --password yourpassword
 # or
 pdsadmin account create you@example.com you.pds.mydomain.com
-# or (INVITE_CODE is required if `invite_required` is `true`, otherwise omit it)
+# or (if invite_required is true, set inviteCode; otherwise omit it)
 curl -X POST https://pds.mydomain.com/xrpc/com.atproto.server.createAccount \
   -H "Content-Type: application/json" \
   -d '{
@@ -92,15 +111,6 @@ curl -X POST https://pds.mydomain.com/xrpc/com.atproto.server.createAccount \
     "password": "yourpassword",
     "inviteCode": "INVITE_CODE"
   }'
-```
-
-If using `curl` directly and `invite_required` is `true`, first generate an invite code via the admin API:
-
-```sh
-curl -X POST https://pds.mydomain.com/xrpc/com.atproto.server.createInviteCode \
-  -u "admin:YOUR_ADMIN_PASSWORD" \
-  -H "Content-Type: application/json" \
-  -d '{"useCount": 1}'
 ```
 
 > [!NOTE]

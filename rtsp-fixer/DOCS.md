@@ -31,7 +31,7 @@ By default, no ports are exposed on the host network, you will need to use `{SLU
 
 Point your Generic Camera integration or FFmpeg at the proxy instead of the upstream stream directly:
 
-```
+```text
 rtsp://{SLUG}-rtsp-stream-fixer:6666/NAME
 ```
 
@@ -39,7 +39,7 @@ Where `NAME` matches the `name` field of the stream in your configuration.
 
 Thumbnails captured by the proxy are available at:
 
-```
+```text
 http://{SLUG}-rtsp-stream-fixer:6667/NAME
 ```
 
