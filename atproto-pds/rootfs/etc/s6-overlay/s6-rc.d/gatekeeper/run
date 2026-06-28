@@ -21,7 +21,8 @@ if ! bashio::fs.file_exists "${SECRETS_FILE}"; then
 fi
 source "${SECRETS_FILE}"
 
-if bashio::config.true 'gatekeeper.captcha'; then
+PDS_BASE_URL="https://${PDS_HOSTNAME}"
+if bashio::config.true 'gatekeeper.captcha.enabled'; then
   bashio::config.require 'gatekeeper.captcha.hcaptcha_site_key'
   bashio::config.require 'gatekeeper.captcha.hcaptcha_secret_key'
 
@@ -35,8 +36,9 @@ if bashio::config.true 'gatekeeper.only_migrations'; then
   export GATEKEEPER_ALLOW_ONLY_MIGRATIONS=true
 fi
 
-export GATEKEEPER_PORT=127.0.0.1
+export GATEKEEPER_HOST=127.0.0.1
 export GATEKEEPER_PORT=3002
+export PDS_BASE_URL="http://127.0.0.1:3001"
 export GATEKEEPER_TWO_FACTOR_EMAIL_SUBJECT="Sign in to ${PDS_HOSTNAME}"
 export GATEKEEPER_REQUEST_LOGGING=true
 # GATEKEEPER_CREATE_ACCOUNT_PER_SECOND

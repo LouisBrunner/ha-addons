@@ -28,12 +28,8 @@ export PDS_INVITE_REQUIRED="$(bashio::config 'invite_required' 'true')"
 if bashio::config.has_value 'recovery_did_key'; then
   export PDS_RECOVERY_DID_KEY="$(bashio::config 'recovery_did_key')"
 fi
-if bashio::config.true 'gatekeeper.enabled'; then
-  export PDS_PORT=3001
-else
-  export PDS_PORT=3000
-fi
 
+export PDS_PORT=3001
 export PDS_BLOBSTORE_DISK_LOCATION=/data/blobs
 export LOG_ENABLED=true
 

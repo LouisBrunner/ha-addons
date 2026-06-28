@@ -52,11 +52,22 @@ configuration:
         name: Only Migrations
         description: >-
           Enables only migrations, disabling account creation
+  customize:
+    name: Customize
+    fields:
+      enabled:
+        name: Enable Customization
+        description: >-
+          Enables customization of the Caddyfile
+      caddyfile_filename:
+        name: Caddyfile Filename
+        description: >-
+          Filename of the `.caddyfile` snippet to import from `/share` (default: `pds.caddyfile`)
   debug:
     name: Debug Mode
     description: >-
       Enables debug logging, used mostly for development or debugging purposes
 network:
-  3000/tcp: PDS / Caddy (when Gatekeeper is enabled) (HTTP)
-  3001/tcp: PDS (TCP) [when Gatekeeper is enabled]
-  3002/tcp: Gateway (HTTP) [when Gatekeeper is enabled]
+  3000/tcp: Caddy (HTTP)
+  3001/tcp: PDS (TCP)
+  3002/tcp: Gatekeeper (HTTP) [if enabled]

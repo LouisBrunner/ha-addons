@@ -17,6 +17,11 @@ options:
     enabled: true
     captcha:
       enabled: false
+    only_migrations: false
+  customize:
+    enabled: false
+    caddyfile_filename: pds.caddyfile
+  debug: false
 schema:
   hostname: str
   admin_password: password
@@ -31,6 +36,11 @@ schema:
       hcaptcha_site_key: str?
       hcaptcha_secret_key: str?
     only_migrations: bool?
+  customize:
+    enabled: bool?
+    caddyfile_filename: str?
   debug: bool?
 ports:
   3000/tcp: null
+map:
+  - share
