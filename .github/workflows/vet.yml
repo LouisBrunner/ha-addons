@@ -14,7 +14,8 @@ jobs:
     name: Find add-ons
     runs-on: ubuntu-24.04
     outputs:
-      addons: ${{ steps.addons.outputs.addons_list }}
+      addons_go: ${{ steps.sort.outputs.addons_go }}
+      addons_sh: ${{ steps.addons.outputs.addons_list }}
     steps:
       - name: Checkout the repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -22,13 +23,33 @@ jobs:
       - id: addons
         uses: home-assistant/actions/helpers/find-addons@f4ca6f671bd429efb108c0f2fa0ae8af0215986c
 
-  vet:
-    name: Vet add-on ${{ matrix.path }}
+      - id: sort
+        run: |
+          addons_go='[]'
+          for addon in $(echo '${{ steps.addons.outputs.addons_list }}' | jq -r '.[]'); do
+            if [ -d "$addon/server" ]; then
+              addons_go=$(echo "$addons_go" | jq -c ". + [\"$addon\"]")
+            fi
+          done
+          echo "addons_go=$addons_go" >> "$GITHUB_OUTPUT"
+
+  vet-go:
+    name: Vet add-on ${{ matrix.path }} (Go)
     needs: find
     strategy:
       matrix:
-        path: ${{ fromJson(needs.find.outputs.addons) }}
-    uses: LouisBrunnel/.github/.github/workflows/lint-go.yml@main
+        path: ${{ fromJson(needs.find.outputs.addons_go) }}
+    uses: LouisBrunner/.github/.github/workflows/lint-go.yml@main
     with:
       go-version-file: ${{ matrix.path }}/server/go.mod
       run: make vet -C ${{ matrix.path }}/server
+
+  vet-sh:
+    name: Vet add-on ${{ matrix.path }} (sh)
+    needs: find
+    strategy:
+      matrix:
+        path: ${{ fromJson(needs.find.outputs.addons_sh) }}
+    uses: LouisBrunner/.github/.github/workflows/lint-sh.yml@main
+    with:
+      path: ${{ matrix.path }}
