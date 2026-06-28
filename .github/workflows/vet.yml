@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       addons_go: ${{ steps.sort.outputs.addons_go }}
-      addons_sh: ${{ steps.addons.outputs.addons_list }}
+      addons: ${{ steps.addons.outputs.addons_list }}
     steps:
       - name: Checkout the repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -49,7 +49,8 @@ jobs:
     needs: find
     strategy:
       matrix:
-        path: ${{ fromJson(needs.find.outputs.addons_sh) }}
+        path: ${{ fromJson(needs.find.outputs.addons) }}
     uses: LouisBrunner/.github/.github/workflows/lint-sh.yml@main
     with:
       path: ${{ matrix.path }}
+      shellcheck-options: -P ${{ matrix.path }}/rootfs

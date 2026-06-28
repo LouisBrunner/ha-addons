@@ -4,7 +4,8 @@
 # Take down the S6 supervision tree when daemon fails
 # ==============================================================================
 
-readonly exit_code_container=$(</run/s6-linux-init-container-results/exitcode)
+exit_code_container=$(</run/s6-linux-init-container-results/exitcode)
+readonly exit_code_container
 readonly exit_code_service="${1}"
 readonly exit_code_signal="${2}"
 readonly service="${3}"
