@@ -12,3 +12,6 @@ concurrency:
 jobs:
   configs:
     uses: LouisBrunner/.github/.github/workflows/lint-configs.yml@main
+    permissions:
+      contents: read
+      statuses: write

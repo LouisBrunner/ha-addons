@@ -19,6 +19,7 @@ if ! bashio::fs.file_exists "${SECRETS_FILE}"; then
 	printf "export GATEKEEPER_JWE_KEY=%s\n" "${jwt_secret}" >"${SECRETS_FILE}"
 	bashio::log.info "Secrets written to ${SECRETS_FILE}"
 fi
+# shellcheck source=/dev/null
 source "${SECRETS_FILE}"
 
 if bashio::config.true 'gatekeeper.captcha.enabled'; then
@@ -26,8 +27,10 @@ if bashio::config.true 'gatekeeper.captcha.enabled'; then
 	bashio::config.require 'gatekeeper.captcha.hcaptcha_secret_key'
 
 	export GATEKEEPER_CREATE_ACCOUNT_CAPTCHA=true
-	export PDS_HCAPTCHA_SITE_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_site_key')"
-	export PDS_HCAPTCHA_SECRET_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_secret_key')"
+	PDS_HCAPTCHA_SITE_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_site_key')"
+	export PDS_HCAPTCHA_SITE_KEY
+	PDS_HCAPTCHA_SECRET_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_secret_key')"
+	export PDS_HCAPTCHA_SECRET_KEY
 	export GATEKEEPER_DEFAULT_CAPTCHA_REDIRECT="${PDS_PUBLIC_URL}"
 	export GATEKEEPER_CAPTCHA_SUCCESS_REDIRECTS="${PDS_PUBLIC_URL}"
 fi
