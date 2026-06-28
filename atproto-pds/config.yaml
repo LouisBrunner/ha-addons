@@ -3,7 +3,7 @@ description: "Self-hosted AT Protocol Personal Data Server for Bluesky and the A
 version: "0.0.1"
 slug: "atproto-pds"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/atproto-pds"
-# image: ghcr.io/louisbrunner/ha-atproto-pds
+image: ghcr.io/louisbrunner/ha-atproto-pds
 init: false
 arch:
   - aarch64
