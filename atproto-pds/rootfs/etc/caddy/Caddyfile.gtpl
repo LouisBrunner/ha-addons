@@ -31,7 +31,7 @@
   {{- end }}
 
   {{- if .customize.enabled }}
-  import /share/{{ .customize.caddyfile_filename }};
+  import /share/{{ .customize.caddyfile_filename }}
   {{- end }}
 
   reverse_proxy http://127.0.0.1:3001 {

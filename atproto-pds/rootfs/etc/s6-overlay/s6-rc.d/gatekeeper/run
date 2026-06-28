@@ -21,7 +21,6 @@ if ! bashio::fs.file_exists "${SECRETS_FILE}"; then
 fi
 source "${SECRETS_FILE}"
 
-PDS_BASE_URL="https://${PDS_HOSTNAME}"
 if bashio::config.true 'gatekeeper.captcha.enabled'; then
   bashio::config.require 'gatekeeper.captcha.hcaptcha_site_key'
   bashio::config.require 'gatekeeper.captcha.hcaptcha_secret_key'
@@ -29,8 +28,8 @@ if bashio::config.true 'gatekeeper.captcha.enabled'; then
   export GATEKEEPER_CREATE_ACCOUNT_CAPTCHA=true
   export PDS_HCAPTCHA_SITE_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_site_key')"
   export PDS_HCAPTCHA_SECRET_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_secret_key')"
-  export GATEKEEPER_DEFAULT_CAPTCHA_REDIRECT="${PDS_BASE_URL}"
-  export GATEKEEPER_CAPTCHA_SUCCESS_REDIRECTS="${PDS_BASE_URL}"
+  export GATEKEEPER_DEFAULT_CAPTCHA_REDIRECT="${PDS_PUBLIC_URL}"
+  export GATEKEEPER_CAPTCHA_SUCCESS_REDIRECTS="${PDS_PUBLIC_URL}"
 fi
 if bashio::config.true 'gatekeeper.only_migrations'; then
   export GATEKEEPER_ALLOW_ONLY_MIGRATIONS=true
@@ -44,6 +43,6 @@ export GATEKEEPER_REQUEST_LOGGING=true
 # GATEKEEPER_CREATE_ACCOUNT_PER_SECOND
 # GATEKEEPER_CREATE_ACCOUNT_BURST
 
-bashio::log.info "Starting Gatekeeper PDS on ${GATEKEEPER_PORT}..."
+bashio::log.info "Starting Gatekeeper on port ${GATEKEEPER_PORT}..."
 print_env
 exec /usr/local/bin/pds_gatekeeper
