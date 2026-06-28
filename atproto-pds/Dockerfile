@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.17
+
 # FROM fatfingers23/pds_gatekeeper:0.1.0.7 AS gatekeeper # FIXME: can't use, glibc
 FROM rust:1.89.0-alpine3.22 AS gatekeeper
 RUN apk add --no-cache musl-dev pkgconf openssl-dev openssl-libs-static

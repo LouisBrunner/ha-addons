@@ -1,7 +1,7 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/base:3.23
 
 FROM golang:1.26.4-alpine3.24 AS go-builder
-RUN apk add --no-cache gcc==15.2.0-r2 musl-dev==1.2.5-r23
+RUN apk add --no-cache gcc==15.2.0-r5 musl-dev==1.2.6-r24
 WORKDIR /code
 RUN go env
 

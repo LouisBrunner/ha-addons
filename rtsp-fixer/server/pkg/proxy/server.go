@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"github.com/bluenviron/gortsplib/v4"
 	"github.com/bluenviron/gortsplib/v4/pkg/base"
@@ -81,8 +82,9 @@ func NewServer(logger *logrus.Logger, baseFolder, port, httpPort string, streams
 	mux.HandleFunc("GET /", me.serveThumbnail)
 	mux.HandleFunc("POST /", me.resetThumbnail)
 	me.httpSrv = &http.Server{
-		Addr:    fmt.Sprintf(":%s", httpPort),
-		Handler: mux,
+		Addr:              fmt.Sprintf(":%s", httpPort),
+		Handler:           mux,
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 	return me, nil
 }
@@ -125,15 +127,15 @@ func (me *server) OnRequest(ctx *gortsplib.ServerConn, req *base.Request) {
 	ctx.SetUserData(client)
 }
 
-func (me *server) OnSessionOpen(ctx *gortsplib.ServerHandlerOnSessionOpenCtx) {
+func (me *server) OnSessionOpen(_ctx *gortsplib.ServerHandlerOnSessionOpenCtx) {
 	me.logger.Debugf("session opened")
 }
 
-func (me *server) OnSessionClose(ctx *gortsplib.ServerHandlerOnSessionCloseCtx) {
+func (me *server) OnSessionClose(_ctx *gortsplib.ServerHandlerOnSessionCloseCtx) {
 	me.logger.Debugf("session closed")
 }
 
-func (me *server) OnResponse(ctx *gortsplib.ServerConn, resp *base.Response) {
+func (me *server) OnResponse(_ctx *gortsplib.ServerConn, resp *base.Response) {
 	me.logger.Debugf("response %+v", resp)
 	resp.Header["Server"] = base.HeaderValue{userAgent}
 }
