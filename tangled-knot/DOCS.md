@@ -36,4 +36,4 @@ The following paths are stored in `/data` and survive app restarts and updates:
 
 ## Registering your knot with Tangled
 
-After starting the app, register it [here](https://tangled.org/settings/knots) so Tangled knows about it.
+After starting the app, register it [here on Tangled](https://tangled.org/settings/knots).

@@ -111,7 +111,7 @@ curl -X POST https://pds.mydomain.com/xrpc/com.atproto.server.createInviteCode \
 
 To use `mydomain.com` as your handle instead of `you.pds.mydomain.com`, add a DNS TXT record:
 
-```
+```text
 _atproto.mydomain.com  TXT  "did=did:plc:yourDIDhere"
 ```
 
