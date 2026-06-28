@@ -17,7 +17,7 @@ mkdir -p "${KNOT_REPO_SCAN_PATH}"
 
 bashio::log.info "Starting Tangled knot on ${KNOT_SERVER_HOSTNAME}..."
 if bashio::debug; then
-  bashio::log.debug "Environment:"
-  env
+	bashio::log.debug "Environment:"
+	env
 fi
 exec /init
