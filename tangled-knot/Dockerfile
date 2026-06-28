@@ -1,12 +1,12 @@
 FROM atcr.io/tangled.org/knot:v1.15.0-alpha
 ARG BASHIO_VERSION=v0.18.1
 
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 RUN apk add --no-cache curl jq openssl bash \
   && mkdir -p /usr/lib/bashio \
   && curl -fsSL "https://github.com/hassio-addons/bashio/archive/${BASHIO_VERSION}.tar.gz" \
   | tar -xzm --strip-components=2 -C /usr/lib/bashio && ln -s /usr/lib/bashio/bashio /usr/bin/bashio
 
-COPY --chmod=0755 run.sh /
 CMD ["/run.sh"]
 
 ARG BUILD_ARCH

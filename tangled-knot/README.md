@@ -2,7 +2,7 @@
 
 ![Logo](logo.png)
 
-Self-hosted Tangled knot server (git hosting on AT Protocol) for Home Assistant.
+Self-hosted Tangled knot server (Git hosting on AT Protocol) for Home Assistant.
 
 See [documentation (Home Assistant)](./documentation) or [documentation (GitHub)](./DOCS.md) for details.
 

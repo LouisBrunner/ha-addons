@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Get add-on information
         id: info
@@ -100,6 +102,8 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Publish multi-arch manifest
         uses: ./.github/actions/publish-multi-arch-manifest

@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Get changed files
         id: changed_files
@@ -42,7 +44,7 @@ jobs:
           changed_addons=()
 
           if [[ "${CHANGED_FILES}" =~ \.github/workflows/(builder|build-addon)\.yaml ]]; then
-            changed_addons=(${ADDONS})
+            read -ra changed_addons <<< "${ADDONS}"
           else
             for addon in ${ADDONS}; do
               for file in ${MONITORED_FILES}; do

@@ -1,6 +1,6 @@
 # Tangled Knot
 
-Self-hosted [Tangled](https://tangled.org) knot server for git repository hosting on the AT Protocol, based on the [knot-docker](https://tangled.org/tangled.org/knot-docker) image.
+Self-hosted [Tangled](https://tangled.org) knot server for Git repository hosting on the AT Protocol, based on the [knot-docker](https://tangled.org/tangled.org/knot-docker) image.
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ The following paths are stored in `/data` and survive app restarts and updates:
 | Path                  | Contents                                       |
 | --------------------- | ---------------------------------------------- |
 | `/data/knotserver.db` | SQLite database                                |
-| `/data/repositories/` | Bare git repositories                          |
+| `/data/repositories/` | Bare Git repositories                          |
 | `/data/keys/`         | SSH host keys (symlinked from `/etc/ssh/keys`) |
 
 ## Registering your knot with Tangled
