@@ -5,9 +5,9 @@ WORKDIR /app
 ADD --unpack https://tangled.org/did:plc:p3aqxmyn6f3pkm4dcl5co5gp/archive/eef639e04811b734f426548a63fc8911886c3b48?format=tar.gz /src
 RUN cp -a /src/*/. /app/
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/usr/local/cargo/git/db \
-    --mount=type=cache,target=/app/target \
-    cargo build --release && cp target/release/pds_gatekeeper /pds_gatekeeper
+  --mount=type=cache,target=/usr/local/cargo/git/db \
+  --mount=type=cache,target=/app/target \
+  cargo build --release && cp target/release/pds_gatekeeper /pds_gatekeeper
 
 FROM ghcr.io/bluesky-social/pds:0.4.5009 AS pds
 
