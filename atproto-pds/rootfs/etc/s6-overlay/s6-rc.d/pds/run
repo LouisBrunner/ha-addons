@@ -7,18 +7,18 @@ source /etc/s6-overlay/scripts/common.sh
 
 SECRETS_FILE=/data/secrets.env
 if ! bashio::fs.file_exists "${SECRETS_FILE}"; then
-  bashio::log.info "First run: generating secrets..."
+	bashio::log.info "First run: generating secrets..."
 
-  jwt_secret="$(openssl rand -hex 32)"
-  plc_key="$(openssl ecparam --name secp256k1 --genkey --noout --outform DER | tail -c +8 | head -c 32 | xxd -p -c 32)"
+	jwt_secret="$(openssl rand -hex 32)"
+	plc_key="$(openssl ecparam --name secp256k1 --genkey --noout --outform DER | tail -c +8 | head -c 32 | xxd -p -c 32)"
 
-  if [[ -z "${jwt_secret}" ]] || [[ -z "${plc_key}" ]]; then
-    bashio::log.fatal "Failed to generate secrets — is openssl working?"
-    exit 1
-  fi
+	if [[ -z "${jwt_secret}" ]] || [[ -z "${plc_key}" ]]; then
+		bashio::log.fatal "Failed to generate secrets — is openssl working?"
+		exit 1
+	fi
 
-  printf "export PDS_JWT_SECRET=%s\nexport PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=%s\n" "${jwt_secret}" "${plc_key}" >"${SECRETS_FILE}"
-  bashio::log.info "Secrets written to ${SECRETS_FILE}"
+	printf "export PDS_JWT_SECRET=%s\nexport PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=%s\n" "${jwt_secret}" "${plc_key}" >"${SECRETS_FILE}"
+	bashio::log.info "Secrets written to ${SECRETS_FILE}"
 fi
 source "${SECRETS_FILE}"
 
@@ -26,7 +26,7 @@ bashio::config.require.safe_password "admin_password"
 export PDS_ADMIN_PASSWORD="$(bashio::config 'admin_password')"
 export PDS_INVITE_REQUIRED="$(bashio::config 'invite_required' 'true')"
 if bashio::config.has_value 'recovery_did_key'; then
-  export PDS_RECOVERY_DID_KEY="$(bashio::config 'recovery_did_key')"
+	export PDS_RECOVERY_DID_KEY="$(bashio::config 'recovery_did_key')"
 fi
 
 export PDS_PORT=3001

@@ -7,32 +7,32 @@ source /etc/s6-overlay/scripts/common.sh
 
 SECRETS_FILE=/data/secrets.gatekeeper.env
 if ! bashio::fs.file_exists "${SECRETS_FILE}"; then
-  bashio::log.info "First run: generating Gatekeeper secrets..."
+	bashio::log.info "First run: generating Gatekeeper secrets..."
 
-  jwt_secret="$(openssl rand -hex 32)"
+	jwt_secret="$(openssl rand -hex 32)"
 
-  if [[ -z "${jwt_secret}" ]]; then
-    bashio::log.fatal "Failed to generate secrets — is openssl working?"
-    exit 1
-  fi
+	if [[ -z "${jwt_secret}" ]]; then
+		bashio::log.fatal "Failed to generate secrets — is openssl working?"
+		exit 1
+	fi
 
-  printf "export GATEKEEPER_JWE_KEY=%s\n" "${jwt_secret}" >"${SECRETS_FILE}"
-  bashio::log.info "Secrets written to ${SECRETS_FILE}"
+	printf "export GATEKEEPER_JWE_KEY=%s\n" "${jwt_secret}" >"${SECRETS_FILE}"
+	bashio::log.info "Secrets written to ${SECRETS_FILE}"
 fi
 source "${SECRETS_FILE}"
 
 if bashio::config.true 'gatekeeper.captcha.enabled'; then
-  bashio::config.require 'gatekeeper.captcha.hcaptcha_site_key'
-  bashio::config.require 'gatekeeper.captcha.hcaptcha_secret_key'
+	bashio::config.require 'gatekeeper.captcha.hcaptcha_site_key'
+	bashio::config.require 'gatekeeper.captcha.hcaptcha_secret_key'
 
-  export GATEKEEPER_CREATE_ACCOUNT_CAPTCHA=true
-  export PDS_HCAPTCHA_SITE_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_site_key')"
-  export PDS_HCAPTCHA_SECRET_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_secret_key')"
-  export GATEKEEPER_DEFAULT_CAPTCHA_REDIRECT="${PDS_PUBLIC_URL}"
-  export GATEKEEPER_CAPTCHA_SUCCESS_REDIRECTS="${PDS_PUBLIC_URL}"
+	export GATEKEEPER_CREATE_ACCOUNT_CAPTCHA=true
+	export PDS_HCAPTCHA_SITE_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_site_key')"
+	export PDS_HCAPTCHA_SECRET_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_secret_key')"
+	export GATEKEEPER_DEFAULT_CAPTCHA_REDIRECT="${PDS_PUBLIC_URL}"
+	export GATEKEEPER_CAPTCHA_SUCCESS_REDIRECTS="${PDS_PUBLIC_URL}"
 fi
 if bashio::config.true 'gatekeeper.only_migrations'; then
-  export GATEKEEPER_ALLOW_ONLY_MIGRATIONS=true
+	export GATEKEEPER_ALLOW_ONLY_MIGRATIONS=true
 fi
 
 export GATEKEEPER_HOST=127.0.0.1
