@@ -3,7 +3,7 @@
 [extend]
 useDefault = true
 
-[allowlists]
+[[allowlists]]
 targetRules = ["curl-auth-user"]
 description = "Example"
 paths = ['''atproto-pds/DOCS.md''']
