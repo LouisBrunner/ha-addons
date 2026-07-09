@@ -45,14 +45,21 @@ jobs:
           ADDON_NAME: ${{ steps.info.outputs.name }}
           ADDON_DESCRIPTION: ${{ steps.info.outputs.description }}
         run: |
-          image="${ADDON_IMAGE}"
+          image="${ADDON_IMAGE%\"}"
+          image="${image#\"}"
           image_base="${image%%-\{arch\}}"
+          version="${ADDON_VERSION%\"}"
+          version="${version#\"}"
+          name="${ADDON_NAME%\"}"
+          name="${name#\"}"
+          description="${ADDON_DESCRIPTION%\"}"
+          description="${description#\"}"
           {
             echo "image_name=${image_base##*/}";
             echo "registry_prefix=${image_base%/*}";
-            echo "version=${ADDON_VERSION}";
-            echo "name=${ADDON_NAME}";
-            echo "description=${ADDON_DESCRIPTION}";
+            echo "version=${version}";
+            echo "name=${name}";
+            echo "description=${description}";
           }  >> "$GITHUB_OUTPUT"
 
       - name: Prepare build matrix
