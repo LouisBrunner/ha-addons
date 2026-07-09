@@ -64,7 +64,8 @@ jobs:
   vet-go:
     name: Vet add-on ${{ matrix.path }} (Go)
     needs: find
-    permissions: {}
+    permissions:
+      contents: read
     strategy:
       matrix:
         path: ${{ fromJson(needs.find.outputs.addons_go) }}
@@ -76,7 +77,8 @@ jobs:
   vet-sh:
     name: Vet add-on ${{ matrix.path }} (sh)
     needs: find
-    permissions: {}
+    permissions:
+      contents: read
     strategy:
       matrix:
         path: ${{ fromJson(needs.find.outputs.addons) }}

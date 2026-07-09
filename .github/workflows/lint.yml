@@ -16,6 +16,7 @@ jobs:
   lint:
     uses: LouisBrunner/.github/.github/workflows/lint-all.yml@main
     permissions:
+      actions: read
       contents: read
       statuses: write
       pull-requests: write
