@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
 name: "AT Protocol PDS"
 description: "Self-hosted AT Protocol Personal Data Server for Bluesky and the Atmosphere"
 version: "0.0.1"
@@ -44,3 +45,4 @@ ports:
   3000/tcp: null
 map:
   - share
+watchdog: http://[HOST]:[PORT:3000]/xrpc/_health

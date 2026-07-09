@@ -287,7 +287,7 @@ func (me *client) recordH264Thumbnail(f *format.H264, p *rtp.Packet) error {
 
 	nalUnits, err := me.thumbnailRecorder.h264.Decode(p)
 	if err != nil {
-		// "need more packets" is normal for FU-A fragments — not a real error
+		// "need more packets" is normal for FU-A fragments, not a real error
 		return nil
 	}
 

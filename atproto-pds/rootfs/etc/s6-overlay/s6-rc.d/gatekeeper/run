@@ -12,7 +12,7 @@ if ! bashio::fs.file_exists "${SECRETS_FILE}"; then
 	jwt_secret="$(openssl rand -hex 32)"
 
 	if [[ -z "${jwt_secret}" ]]; then
-		bashio::log.fatal "Failed to generate secrets — is openssl working?"
+		bashio::log.fatal "Failed to generate secrets, is openssl working?"
 		exit 1
 	fi
 

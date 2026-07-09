@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-repository.schema.json
 name: Louis Brunner's Apps
 url: https://github.com/LouisBrunner/ha-addons
 maintainer: Louis Brunner

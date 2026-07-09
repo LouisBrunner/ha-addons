@@ -8,22 +8,22 @@ Self-hosted [AT Protocol](https://atproto.com) Personal Data Server, based on th
 
 ## Configuration
 
-| Option                                   | Required                                  | Description                                                                                                                                                                              |
-| ---------------------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hostname`                               | Yes                                       | Public hostname of your PDS, e.g. `pds.mydomain.com`                                                                                                                                     |
-| `admin_password`                         | Yes                                       | Password for the PDS admin API                                                                                                                                                           |
-| `smtp_url`                               | Yes                                       | URL of the SMTP server to use for sending emails, e.g. `smtps://account:password@provider:port`                                                                                          |
-| `smtp_from`                              | No                                        | Email address to use as the sender of emails sent by the SMTP server (default: `no-reply@hostname`)                                                                                      |
-| `invite_required`                        | No                                        | Require invite codes to create accounts (default: `true`)                                                                                                                                |
-| `recovery_did_key`                       | No                                        | Recommended. A public key that is added to the users DID, the corresponding private key can be used to recover user accounts in case of a catastrophic loss of data. [^recovery_did_key] |
-| `gatekeeper.enabled`                     | No                                        | Recommended. Run [Gatekeeper](https://tangled.org/pds.dad/pds-gatekeeper) in front of your auth endpoints, enabling MFA, captcha, etc. (default: `true`)                                 |
-| `gatekeeper.captcha.enabled`             | No                                        | Add captcha to Gatekeeper (default: `false`)                                                                                                                                             |
-| `gatekeeper.captcha.hcaptcha_site_key`   | If `gatekeeper.captcha.enabled` is `true` | Site Key from [hCaptcha](https://www.hcaptcha.com/)                                                                                                                                      |
-| `gatekeeper.captcha.hcaptcha_secret_key` | If `gatekeeper.captcha.enabled` is `true` | Secret Key from [hCaptcha](https://www.hcaptcha.com/)                                                                                                                                    |
-| `gatekeeper.only_migrations`             | No                                        | Disable account creations on Gatekeeper (default: `false`)                                                                                                                               |
-| `customize.enabled`                      | No                                        | Import a custom Caddyfile snippet from `/share` (default: `false`)                                                                                                                       |
-| `customize.caddyfile_filename`           | If `customize.enabled` is `true`          | Filename of the `.caddyfile` snippet to import from `/share` (default: `pds.caddyfile`)                                                                                                  |
-| `debug`                                  | No                                        | Enable extra diagnostic logging (default: `false`)                                                                                                                                       |
+| Option                                   | Required                                  | Description                                                                                                                                              |
+| ---------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hostname`                               | Yes                                       | Public hostname of your PDS, e.g. `pds.mydomain.com`                                                                                                     |
+| `admin_password`                         | Yes                                       | Password for the PDS admin API                                                                                                                           |
+| `smtp_url`                               | Yes                                       | URL of the SMTP server to use for sending emails, e.g. `smtps://account:password@provider:port`                                                          |
+| `smtp_from`                              | No                                        | Email address to use as the sender of emails sent by the SMTP server (default: `no-reply@hostname`)                                                      |
+| `invite_required`                        | No                                        | Require invite codes to create accounts (default: `true`)                                                                                                |
+| `recovery_did_key`                       | No                                        | Recommended. Public key added to users' DID, the paired private key can recover accounts on catastrophic data loss. [^recovery_did_key]                  |
+| `gatekeeper.enabled`                     | No                                        | Recommended. Run [Gatekeeper](https://tangled.org/pds.dad/pds-gatekeeper) in front of your auth endpoints, enabling MFA, captcha, etc. (default: `true`) |
+| `gatekeeper.captcha.enabled`             | No                                        | Add captcha to Gatekeeper (default: `false`)                                                                                                             |
+| `gatekeeper.captcha.hcaptcha_site_key`   | If `gatekeeper.captcha.enabled` is `true` | Site Key from [hCaptcha](https://www.hcaptcha.com/)                                                                                                      |
+| `gatekeeper.captcha.hcaptcha_secret_key` | If `gatekeeper.captcha.enabled` is `true` | Secret Key from [hCaptcha](https://www.hcaptcha.com/)                                                                                                    |
+| `gatekeeper.only_migrations`             | No                                        | Disable account creations on Gatekeeper (default: `false`)                                                                                               |
+| `customize.enabled`                      | No                                        | Import a custom Caddyfile snippet from `/share` (default: `false`)                                                                                       |
+| `customize.caddyfile_filename`           | If `customize.enabled` is `true`          | Filename of the `.caddyfile` snippet to import from `/share` (default: `pds.caddyfile`)                                                                  |
+| `debug`                                  | No                                        | Enable extra diagnostic logging (default: `false`)                                                                                                       |
 
 [^recovery_did_key]: Can be generated using `goat key generate`, format `did:key:` expected, see [reference](https://atproto.com/guides/going-to-production#plc-key-management#plc-key-management)
 
@@ -31,7 +31,7 @@ Self-hosted [AT Protocol](https://atproto.com) Personal Data Server, based on th
 
 | Port       | Direction | Description                  |
 | ---------- | --------- | ---------------------------- |
-| `3000/tcp` | inbound   | HTTP — point your proxy here |
+| `3000/tcp` | inbound   | HTTP (point your proxy here) |
 
 HTTP is not exposed to the host by default as it is assumed that you will be using a HTTPS reverse proxy to access it (e.g. `http://{SLUG}-atproto-pds:3000`).
 
@@ -79,7 +79,7 @@ There are also a few unset ones which can be added in the future:
 
 ## First-time account creation
 
-Users can create accounts via the built-in UI at `https://pds.mydomain.com/account` — they will be prompted for an invite code if `invite_required` is `true`.
+Users can create accounts via the built-in UI at `https://pds.mydomain.com/account`, they will be prompted for an invite code if `invite_required` is `true`.
 
 ### Generating invite codes
 

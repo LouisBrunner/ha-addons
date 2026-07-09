@@ -1,0 +1,9 @@
+#:schema https://www.schemastore.org/gitleaks.json
+
+[extend]
+useDefault = true
+
+[allowlists]
+targetRules = ["curl-auth-user"]
+description = "Example"
+paths = ['''atproto-pds/DOCS.md''']

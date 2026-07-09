@@ -11,11 +11,11 @@ Proxy that fixes non-standard RTSP streams so they work with FFmpeg and the Gene
 
 Each entry in `streams` accepts:
 
-| Field                        | Required | Description                                                                                                                                                        |
-| ---------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `name`                       | Yes      | Identifier used in the proxy URL, e.g. `living-room`                                                                                                               |
-| `url`                        | Yes      | URL of the upstream RTSP stream, e.g. `rtsp://192.168.1.10:554/stream`                                                                                             |
-| `fix_force_tcp_in_transport` | No       | Force TCP in the Transport header — fixes streams that cause `Nonmatching transport in server reply` (HA reports it as `Invalid data found when processing input`) |
+| Field                        | Required | Description                                                                                                                    |
+| ---------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `name`                       | Yes      | Identifier used in the proxy URL, e.g. `living-room`                                                                           |
+| `url`                        | Yes      | URL of the upstream RTSP stream, e.g. `rtsp://192.168.1.10:554/stream`                                                         |
+| `fix_force_tcp_in_transport` | No       | Force TCP in Transport header, fixing `Nonmatching transport in server reply` (HA: `Invalid data found when processing input`) |
 
 ## Ports
 

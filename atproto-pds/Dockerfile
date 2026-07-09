@@ -4,6 +4,7 @@
 FROM rust:1.89.0-alpine3.22 AS gatekeeper
 RUN apk add --no-cache musl-dev pkgconf openssl-dev openssl-libs-static
 WORKDIR /app
+#checkov:skip=CKV_DOCKER_4: same behavior as COPY + extraction
 ADD --unpack https://tangled.org/did:plc:p3aqxmyn6f3pkm4dcl5co5gp/archive/eef639e04811b734f426548a63fc8911886c3b48?format=tar.gz /src
 RUN cp -a /src/*/. /app/
 RUN --mount=type=cache,target=/usr/local/cargo/registry \

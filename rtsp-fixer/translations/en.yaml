@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-translations.schema.json
 ---
 configuration:
   debug:
@@ -12,7 +13,8 @@ configuration:
       name:
         name: Name
         description: >-
-          The name of the stream, will be used as the identifier in URL, e.g. rstp://{slup}-rtsp-stream-fixer:6666/my-name
+          The name of the stream, will be used as the identifier in URL,
+          e.g. rstp://{slup}-rtsp-stream-fixer:6666/my-name
       url:
         name: Upstream URL
         description: >-
@@ -20,7 +22,8 @@ configuration:
       fix_force_tcp_in_transport:
         name: "[Fix] Force TCP in Transport"
         description: >-
-          Force TCP in the Transport header, fixes streams that cause `Nonmatching transport in server reply` (HA reports it as `Invalid data found when processing input`).
+          Force TCP in the Transport header, fixes streams that cause `Nonmatching transport in server reply`
+          (HA reports it as `Invalid data found when processing input`).
 network:
   6666/tcp: RTSP proxy stream (TCP)
   6666/udp: RTSP proxy stream (UDP)

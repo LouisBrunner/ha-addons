@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
 name: "RTSP Stream Fixer"
 description: "Fixes the non-standard RTSP streams so they can be used with FFMpeg"
 version: "0.0.9"
@@ -23,3 +24,4 @@ ports:
   6666/tcp: null
   6666/udp: null
   6667/tcp: null
+watchdog: tcp://[HOST]:[PORT:6667]

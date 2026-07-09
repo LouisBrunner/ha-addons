@@ -17,3 +17,4 @@ schema:
 ports:
   5555/tcp: null
   22/tcp: 2525
+watchdog: tcp://[HOST]:[PORT:5555]

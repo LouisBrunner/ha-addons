@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Builder
 
 env:
@@ -29,7 +30,7 @@ jobs:
 
       - name: Get changed files
         id: changed_files
-        uses: tj-actions/changed-files@v47
+        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
 
       - name: Find add-on directories
         id: addons
@@ -79,4 +80,3 @@ jobs:
     with:
       addon: ${{ matrix.addon }}
       publish: ${{ github.event_name == 'push' }}
-    secrets: inherit

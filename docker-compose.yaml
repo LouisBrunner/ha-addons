@@ -1,3 +1,4 @@
+# $schema:https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
 services:
   devcontainer:
     build:
@@ -5,15 +6,19 @@ services:
         FROM ghcr.io/home-assistant/devcontainer:5-apps
         ARG PDS_VERSION=v0.4.5009
         RUN mkdir -p /usr/local/lib/pdsadmin \
-          && curl -fsSL https://raw.githubusercontent.com/bluesky-social/pds/$${PDS_VERSION}/pdsadmin.sh -o /usr/local/bin/pdsadmin \
+          && curl -fsSL https://raw.githubusercontent.com/bluesky-social/pds/$${PDS_VERSION}/pdsadmin.sh \
+            -o /usr/local/bin/pdsadmin \
           && for cmd in account create-invite-code help request-crawl update; do \
                curl -fsSL "https://raw.githubusercontent.com/bluesky-social/pds/$${PDS_VERSION}/pdsadmin/$${cmd}.sh" \
                  | sed 's|https://$${PDS_HOSTNAME}|http://$${PDS_HOSTNAME}|g' \
                  > "/usr/local/lib/pdsadmin/$${cmd}.sh"; \
              done \
-          && sed -i 's|PDSADMIN_BASE_URL=.*|PDSADMIN_BASE_URL="file:///usr/local/lib/pdsadmin"|' /usr/local/bin/pdsadmin \
+          && sed -i 's|PDSADMIN_BASE_URL=.*|PDSADMIN_BASE_URL="file:///usr/local/lib/pdsadmin"|' \
+            /usr/local/bin/pdsadmin \
           && chmod +x /usr/local/bin/pdsadmin \
-          && sed -i 's/docker system prune -f/docker container prune -f \&\& docker network prune -f \&\& docker image prune -f/' /usr/bin/supervisor_run
+          && sed -i \
+              's/system prune -f/container prune -f \&\& docker network prune -f \&\& docker image prune -f/' \
+              /usr/bin/supervisor_run
     configs:
       - source: indocker
         target: /.indocker
@@ -65,8 +70,11 @@ configs:
       docker exec -e PDS_HOST="http://$${PDS_HOSTNAME}" -e PDS_ADMIN_PASSWORD -it addon_local_atproto-pds goat $@
   pds-env:
     content: |
-      export PDS_ADMIN_PASSWORD="$(jq -r .admin_password $${WORKSPACE_DIRECTORY}/data/local_atproto-pds/options.json)"
-      export PDS_HOSTNAME="$(docker inspect addon_local_atproto-pds --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'):3000"
+      PDS_ADMIN_PASSWORD="$(jq -r .admin_password $${WORKSPACE_DIRECTORY}/data/local_atproto-pds/options.json)"
+      export PDS_ADMIN_PASSWORD
+      FORMAT='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
+      PDS_HOSTNAME="$(docker inspect addon_local_atproto-pds --format "$FORMAT"):3000"
+      export PDS_HOSTNAME
   hassio-preset:
     content: |
       enable hassio-supervisor.service

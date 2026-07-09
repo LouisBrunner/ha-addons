@@ -2,7 +2,7 @@ FROM atcr.io/tangled.org/knot:v1.15.0-alpha
 ARG BASHIO_VERSION=v0.18.1
 
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN apk add --no-cache curl jq openssl bash \
+RUN apk add --no-cache curl==8.21.0-r0 jq==1.8.1-r0 openssl==3.5.7-r0 bash==5.3.9-r1 \
   && mkdir -p /usr/lib/bashio \
   && curl -fsSL "https://github.com/hassio-addons/bashio/archive/${BASHIO_VERSION}.tar.gz" \
   | tar -xzm --strip-components=2 -C /usr/lib/bashio && ln -s /usr/lib/bashio/bashio /usr/bin/bashio

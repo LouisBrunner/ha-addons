@@ -6,7 +6,7 @@ Self-hosted [Tangled](https://tangled.org) knot server for Git repository hostin
 
 - A public domain pointing to your Home Assistant then HTTPS routing using Cloudflare tunnel, Nginx reverse proxy, etc.
 - A running AT Protocol PDS (the [AT Protocol PDS app](../atproto-pds) or any other PDS)
-- Your DID — find it at `https://your-pds-hostname/xrpc/com.atproto.identity.resolveHandle?handle=yourhandle`
+- Your DID, find it at `https://your-pds-hostname/xrpc/com.atproto.identity.resolveHandle?handle=yourhandle`
 
 ## Configuration
 
@@ -17,10 +17,10 @@ Self-hosted [Tangled](https://tangled.org) knot server for Git repository hostin
 
 ## Ports
 
-| Port                    | Purpose                               |
-| ----------------------- | ------------------------------------- |
-| `5555/tcp`              | HTTP — point your proxy               |
-| `22/tcp` (host: `2525`) | SSH — for `git clone`/`push` over SSH |
+| Port                    | Purpose                  |
+| ----------------------- | ------------------------ |
+| `5555/tcp`              | HTTP (point your proxy)  |
+| `22/tcp` (host: `2525`) | SSH (for `git` over SSH) |
 
 HTTP is not exposed to the host by default as it is assumed that you will be using a HTTPS reverse proxy to access it (e.g. `http://{SLUG}-tangled-knot:5555`).
 
