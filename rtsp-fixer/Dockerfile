@@ -14,7 +14,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
   --mount=type=cache,target=/go/pkg/mod \
   go build ./cmd/server
 
-FROM ghcr.io/home-assistant/base:3.23-2026.06.1
+FROM ghcr.io/home-assistant/base:3.24-2026.06.1
 RUN apk add --no-cache openh264==2.6.0-r0 netcat-openbsd==1.234.1-r0
 COPY --from=go-build /code/server /server
 CMD ["/run.sh"]
