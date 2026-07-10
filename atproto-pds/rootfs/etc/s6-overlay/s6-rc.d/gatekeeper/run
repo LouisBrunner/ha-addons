@@ -1,0 +1,51 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+set -e
+
+source /etc/s6-overlay/scripts/logging.sh
+source /etc/s6-overlay/scripts/common.sh
+
+SECRETS_FILE=/data/secrets.gatekeeper.env
+if ! bashio::fs.file_exists "${SECRETS_FILE}"; then
+	bashio::log.info "First run: generating Gatekeeper secrets..."
+
+	jwt_secret="$(openssl rand -hex 32)"
+
+	if [[ -z "${jwt_secret}" ]]; then
+		bashio::log.fatal "Failed to generate secrets, is openssl working?"
+		exit 1
+	fi
+
+	printf "export GATEKEEPER_JWE_KEY=%s\n" "${jwt_secret}" >"${SECRETS_FILE}"
+	bashio::log.info "Secrets written to ${SECRETS_FILE}"
+fi
+# shellcheck source=/dev/null
+source "${SECRETS_FILE}"
+
+if bashio::config.true 'gatekeeper.captcha.enabled'; then
+	bashio::config.require 'gatekeeper.captcha.hcaptcha_site_key'
+	bashio::config.require 'gatekeeper.captcha.hcaptcha_secret_key'
+
+	export GATEKEEPER_CREATE_ACCOUNT_CAPTCHA=true
+	PDS_HCAPTCHA_SITE_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_site_key')"
+	export PDS_HCAPTCHA_SITE_KEY
+	PDS_HCAPTCHA_SECRET_KEY="$(bashio::config 'gatekeeper.captcha.hcaptcha_secret_key')"
+	export PDS_HCAPTCHA_SECRET_KEY
+	export GATEKEEPER_DEFAULT_CAPTCHA_REDIRECT="${PDS_PUBLIC_URL}"
+	export GATEKEEPER_CAPTCHA_SUCCESS_REDIRECTS="${PDS_PUBLIC_URL}"
+fi
+if bashio::config.true 'gatekeeper.only_migrations'; then
+	export GATEKEEPER_ALLOW_ONLY_MIGRATIONS=true
+fi
+
+export GATEKEEPER_HOST=127.0.0.1
+export GATEKEEPER_PORT=3002
+export PDS_BASE_URL="http://127.0.0.1:3001"
+export GATEKEEPER_TWO_FACTOR_EMAIL_SUBJECT="Sign in to ${PDS_HOSTNAME}"
+export GATEKEEPER_REQUEST_LOGGING=true
+# GATEKEEPER_CREATE_ACCOUNT_PER_SECOND
+# GATEKEEPER_CREATE_ACCOUNT_BURST
+
+bashio::log.info "Starting Gatekeeper on port ${GATEKEEPER_PORT}..."
+print_env
+exec /usr/local/bin/pds_gatekeeper

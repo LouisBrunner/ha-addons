@@ -8,7 +8,7 @@ require (
 	github.com/pion/rtp v1.10.2
 	github.com/sirupsen/logrus v1.9.4
 	github.com/y9o/go-openh264 v0.2.0
-	golang.org/x/image v0.42.0
+	golang.org/x/image v0.43.0
 )
 
 require (
@@ -23,9 +23,9 @@ require (
 	github.com/pion/transport/v3 v3.0.7 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 // indirect
 	golang.org/x/mod v0.31.0 // indirect
-	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/tools v0.40.1-0.20260108161641-ca281cf95054 // indirect
 	honnef.co/go/tools v0.7.0 // indirect
 )

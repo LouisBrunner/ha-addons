@@ -1,20 +1,114 @@
+# $schema:https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
 services:
   devcontainer:
-    image: ghcr.io/home-assistant/devcontainer:2-addons
+    build:
+      dockerfile_inline: |
+        FROM ghcr.io/home-assistant/devcontainer:5-apps
+        ARG PDS_VERSION=v0.4.5009
+        RUN mkdir -p /usr/local/lib/pdsadmin \
+          && curl -fsSL https://raw.githubusercontent.com/bluesky-social/pds/$${PDS_VERSION}/pdsadmin.sh \
+            -o /usr/local/bin/pdsadmin \
+          && for cmd in account create-invite-code help request-crawl update; do \
+               curl -fsSL "https://raw.githubusercontent.com/bluesky-social/pds/$${PDS_VERSION}/pdsadmin/$${cmd}.sh" \
+                 | sed 's|https://$${PDS_HOSTNAME}|http://$${PDS_HOSTNAME}|g' \
+                 > "/usr/local/lib/pdsadmin/$${cmd}.sh"; \
+             done \
+          && sed -i 's|PDSADMIN_BASE_URL=.*|PDSADMIN_BASE_URL="file:///usr/local/lib/pdsadmin"|' \
+            /usr/local/bin/pdsadmin \
+          && chmod +x /usr/local/bin/pdsadmin \
+          && sed -i \
+              's/system prune -f/container prune -f \&\& docker network prune -f \&\& docker image prune -f/' \
+              /usr/bin/supervisor_run
+    configs:
+      - source: indocker
+        target: /.indocker
+      - source: hassio-supervisor
+        target: /etc/systemd/system/hassio-supervisor.service
+      - source: hassio-bootstrap
+        target: /etc/systemd/system/hassio-bootstrap.service
+      - source: hassio-preset
+        target: /usr/lib/systemd/system-preset/00-hassio.preset
+      - source: goat
+        target: /usr/local/bin/goat
+        mode: 755
+      - source: pds-env
+        target: /pds/pds.env
+    working_dir: /mnt/supervisor/apps/local
     privileged: true
     environment:
-      - WORKSPACE_DIRECTORY=/mnt/supervisor/addons/local/ha-addons
-    command: sleep infinity
+      WORKSPACE_DIRECTORY: /mnt/supervisor/apps
+      SUPERVISOR_CHANNEL: beta
     volumes:
-      - .:/mnt/supervisor/addons/local/ha-addons:cached
-      - docker-data:/var/lib/docker
-      - supervisor-data:/mnt/supervisor
+      - ~/.docker_bash_history:/root/.bash_history
+      - .:/mnt/supervisor/apps/local
+      - docker:/var/lib/docker
+      - containerd:/var/lib/containerd
+      - supervisor:/mnt/supervisor
+      - tmp:/tmp
     ports:
-      - "6666:6666"
-      - "6667:6667"
-      - "7123:8123"
       - "7357:4357"
+      - "7123:8123"
 
 volumes:
-  docker-data:
-  supervisor-data:
+  docker:
+  containerd:
+  supervisor:
+  tmp:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+
+configs:
+  indocker:
+    content: ""
+  goat:
+    content: |
+      #!/bin/bash
+
+      source /pds/pds.env
+      docker exec -e PDS_HOST="http://$${PDS_HOSTNAME}" -e PDS_ADMIN_PASSWORD -it addon_local_atproto-pds goat $@
+  pds-env:
+    content: |
+      PDS_ADMIN_PASSWORD="$(jq -r .admin_password $${WORKSPACE_DIRECTORY}/data/local_atproto-pds/options.json)"
+      export PDS_ADMIN_PASSWORD
+      FORMAT='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
+      PDS_HOSTNAME="$(docker inspect addon_local_atproto-pds --format "$$FORMAT"):3000"
+      export PDS_HOSTNAME
+  hassio-preset:
+    content: |
+      enable hassio-supervisor.service
+      enable hassio-bootstrap.service
+  hassio-supervisor:
+    content: |
+      [Unit]
+      Description=Hass.io Supervisor
+      Requires=docker.service
+      After=docker.service hassio-apparmor.service
+      PartOf=docker.service
+
+      [Service]
+      Type=simple
+      Restart=always
+      RestartSec=5
+      PassEnvironment=SUPERVISOR_CHANNEL
+      ExecStart=/usr/bin/supervisor_run
+      StandardOutput=null
+
+      [Install]
+      WantedBy=multi-user.target
+  hassio-bootstrap:
+    content: |
+      [Unit]
+      Description=Hass.io Bootstrap
+      Requires=hassio-supervisor.service
+      After=hassio-supervisor.service
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=true
+      PassEnvironment=WORKSPACE_DIRECTORY
+      ExecStart=bash devcontainer_bootstrap
+
+      [Install]
+      WantedBy=multi-user.target

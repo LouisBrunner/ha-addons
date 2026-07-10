@@ -1,0 +1,15 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+set -e
+
+source /etc/s6-overlay/scripts/logging.sh
+
+bashio::log.debug "Full config: $(bashio::addon.config)"
+
+bashio::log.info "Generating Caddyfile from template"
+bashio::addon.config | tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile
+bashio::log.debug "Caddyfile: $(cat /etc/caddy/Caddyfile)"
+
+bashio::log.info "Starting Caddy on 3000..."
+print_env
+exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile

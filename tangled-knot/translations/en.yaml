@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-translations.schema.json
+---
+configuration:
+  hostname:
+    name: Hostname
+    description: >-
+      Public hostname of the knot, e.g. git.mydomain.com
+  owner_did:
+    name: Owner DID
+    description: >-
+      Your AT Protocol DID, e.g. did:plc:xxxxxxxxxxxx
+network:
+  5555/tcp: "Knot (HTTP)"
+  22/tcp: "Git (SSH)"

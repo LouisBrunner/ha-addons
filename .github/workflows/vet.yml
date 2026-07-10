@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Vet
 
 on:
@@ -9,26 +10,79 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   find:
     name: Find add-ons
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     outputs:
+      addons_go: ${{ steps.sort.outputs.addons_go }}
       addons: ${{ steps.addons.outputs.addons_list }}
     steps:
       - name: Checkout the repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - id: addons
         uses: home-assistant/actions/helpers/find-addons@f4ca6f671bd429efb108c0f2fa0ae8af0215986c
 
-  vet:
-    name: Vet add-on ${{ matrix.path }}
+      - id: sort
+        env:
+          ADDONS_LIST: ${{ steps.addons.outputs.addons_list }}
+        run: |
+          addons_go='[]'
+          for addon in $(echo "${ADDONS_LIST}" | jq -r '.[]'); do
+            if [ -d "$addon/server" ]; then
+              addons_go=$(echo "$addons_go" | jq -c ". + [\"$addon\"]")
+            fi
+          done
+          echo "addons_go=$addons_go" >> "$GITHUB_OUTPUT"
+
+  lint:
+    name: Lint add-on ${{ matrix.path }}
+    runs-on: ubuntu-24.04
     needs: find
+    permissions:
+      contents: read
     strategy:
       matrix:
         path: ${{ fromJson(needs.find.outputs.addons) }}
-    uses: LouisBrunnel/.github/.github/workflows/lint-go.yml@main
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - uses: frenck/action-addon-linter@f995494fd84fae6310d23617e66d0e37de4f14eb # v2.21
+        with:
+          path: "./${{ matrix.path }}"
+
+  vet-go:
+    name: Vet add-on ${{ matrix.path }} (Go)
+    needs: find
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        path: ${{ fromJson(needs.find.outputs.addons_go) }}
+    uses: LouisBrunner/.github/.github/workflows/lint-go.yml@main
     with:
       go-version-file: ${{ matrix.path }}/server/go.mod
       run: make vet -C ${{ matrix.path }}/server
+
+  vet-sh:
+    name: Vet add-on ${{ matrix.path }} (sh)
+    needs: find
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        path: ${{ fromJson(needs.find.outputs.addons) }}
+    uses: LouisBrunner/.github/.github/workflows/lint-sh.yml@main
+    with:
+      path: ${{ matrix.path }}
+      shellcheck-options: -P ${{ matrix.path }}/rootfs

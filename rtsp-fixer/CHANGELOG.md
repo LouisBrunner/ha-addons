@@ -1,5 +1,9 @@
 # Releases
 
+## 0.0.9
+
+Do not expose any ports by default, use `{SLUG}-rtsp-stream-fixer:6666/6667` to access the stream/thumbnails.
+
 ## 0.0.8
 
 Add POST endpoint on the thumbnail URI to reset the capture timeout, forcing a new screenshot on the next frame.

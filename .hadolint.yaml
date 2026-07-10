@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/hadolint/hadolint/master/contrib/hadolint.json
+
+# FIXME: because of https://github.com/hadolint/hadolint/issues/1145
+no-fail: true

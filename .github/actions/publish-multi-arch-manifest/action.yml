@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
 # Forked from https://github.com/home-assistant/builder/blob/master/actions/publish-multi-arch-manifest/action.yml
 name: Publish multi-arch manifest
 description: Create a multi-arch manifest from per-architecture images and optionally sign it
