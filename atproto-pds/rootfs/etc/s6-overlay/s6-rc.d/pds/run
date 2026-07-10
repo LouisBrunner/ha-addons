@@ -37,6 +37,8 @@ export PDS_PORT=3001
 export PDS_BLOBSTORE_DISK_LOCATION=/data/blobs
 export LOG_ENABLED=true
 
+mkdir -p "${PDS_DATA_DIRECTORY}" "${PDS_BLOBSTORE_DISK_LOCATION}"
+
 # Values match the official installer defaults
 export PDS_BLOB_UPLOAD_LIMIT=104857600
 export PDS_DID_PLC_URL=https://plc.directory

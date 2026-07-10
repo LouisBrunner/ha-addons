@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
 name: "AT Protocol PDS"
 description: "Self-hosted AT Protocol Personal Data Server for Bluesky and the Atmosphere"
-version: "0.0.1"
+version: "0.0.2"
 slug: "atproto-pds"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/atproto-pds"
 image: ghcr.io/louisbrunner/ha-atproto-pds

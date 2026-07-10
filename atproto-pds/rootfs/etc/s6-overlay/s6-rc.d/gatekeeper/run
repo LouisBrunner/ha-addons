@@ -41,6 +41,11 @@ fi
 export GATEKEEPER_HOST=127.0.0.1
 export GATEKEEPER_PORT=3002
 export PDS_BASE_URL="http://127.0.0.1:3001"
+
+bashio::log.info "Waiting for PDS to be ready..."
+until curl -fsS -o /dev/null "${PDS_BASE_URL}/xrpc/_health"; do
+	sleep 2
+done
 export GATEKEEPER_TWO_FACTOR_EMAIL_SUBJECT="Sign in to ${PDS_HOSTNAME}"
 export GATEKEEPER_REQUEST_LOGGING=true
 # GATEKEEPER_CREATE_ACCOUNT_PER_SECOND
