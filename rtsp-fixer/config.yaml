@@ -24,4 +24,3 @@ ports:
   6666/tcp: null
   6666/udp: null
   6667/tcp: null
-watchdog: tcp://[HOST]:[PORT:6667]

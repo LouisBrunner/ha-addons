@@ -45,4 +45,3 @@ ports:
   3000/tcp: null
 map:
   - share
-watchdog: http://[HOST]:[PORT:3000]/xrpc/_health

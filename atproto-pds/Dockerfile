@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 FROM ghcr.io/bluesky-social/pds:0.4.5009 AS pds
 
 FROM ghcr.io/home-assistant/base:3.23
-RUN apk add --no-cache caddy nodejs-current openssl
+RUN apk add --no-cache caddy nodejs-current openssl curl==8.19.0-r0 netcat-openbsd==1.234.1-r0
 
 ENV S6_STAGE2_HOOK=/etc/s6-overlay/scripts/stage2-hook.sh
 
@@ -49,3 +49,5 @@ LABEL \
   org.opencontainers.image.created=${BUILD_DATE} \
   org.opencontainers.image.revision=${BUILD_REF} \
   org.opencontainers.image.version=${BUILD_VERSION}
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD /etc/healthcheck.sh

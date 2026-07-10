@@ -9,6 +9,9 @@ RUN apk add --no-cache curl==8.21.0-r0 jq==1.8.1-r0 openssl==3.5.7-r0 bash==5.3.
 
 CMD ["/run.sh"]
 
+# TODO: replace with a real check once tangled-knot is developed further
+HEALTHCHECK CMD true
+
 ARG BUILD_ARCH
 ARG BUILD_DATE
 ARG BUILD_DESCRIPTION

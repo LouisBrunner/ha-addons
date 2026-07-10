@@ -73,7 +73,7 @@ configs:
       PDS_ADMIN_PASSWORD="$(jq -r .admin_password $${WORKSPACE_DIRECTORY}/data/local_atproto-pds/options.json)"
       export PDS_ADMIN_PASSWORD
       FORMAT='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
-      PDS_HOSTNAME="$(docker inspect addon_local_atproto-pds --format "$FORMAT"):3000"
+      PDS_HOSTNAME="$(docker inspect addon_local_atproto-pds --format "$$FORMAT"):3000"
       export PDS_HOSTNAME
   hassio-preset:
     content: |
