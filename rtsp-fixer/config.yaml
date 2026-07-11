@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
 name: "RTSP Stream Fixer"
 description: "Fixes the non-standard RTSP streams so they can be used with FFMpeg"
-version: "0.0.10"
+version: "0.0.11"
 slug: "rtsp-stream-fixer"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/rtsp-fixer"
 init: false
@@ -18,7 +18,7 @@ schema:
   debug: bool?
   streams:
     - name: str
-      url: url
+      url: password
       fix_force_tcp_in_transport: bool?
 ports:
   6666/tcp: null

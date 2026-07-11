@@ -1,5 +1,9 @@
 # Releases
 
+## 0.0.11
+
+Mask `streams[].url` in the UI/logs by typing it as `password` (RTSP URLs commonly embed camera credentials).
+
 ## 0.0.10
 
 Fix `run.sh` missing from the image, causing the addon to fail to start.

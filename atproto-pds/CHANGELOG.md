@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3
+
+Mask `smtp_url` and `gatekeeper.captcha.hcaptcha_secret_key` in the UI/logs by typing them as `password` (they carry credentials).
+
 ## 0.0.2
 
 Fix startup failures on a fresh install.

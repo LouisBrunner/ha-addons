@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
 name: "AT Protocol PDS"
 description: "Self-hosted AT Protocol Personal Data Server for Bluesky and the Atmosphere"
-version: "0.0.2"
+version: "0.0.3"
 slug: "atproto-pds"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/atproto-pds"
 image: ghcr.io/louisbrunner/ha-atproto-pds
@@ -26,7 +26,7 @@ options:
 schema:
   hostname: str
   admin_password: password
-  smtp_url: str
+  smtp_url: password
   smtp_from: str?
   invite_required: bool?
   recovery_did_key: str?
@@ -35,7 +35,7 @@ schema:
     captcha:
       enabled: bool?
       hcaptcha_site_key: str?
-      hcaptcha_secret_key: str?
+      hcaptcha_secret_key: password?
     only_migrations: bool?
   customize:
     enabled: bool?
