@@ -1,5 +1,9 @@
 # Releases
 
+## 0.0.10
+
+Fix `run.sh` missing from the image, causing the addon to fail to start.
+
 ## 0.0.9
 
 Do not expose any ports by default, use `{SLUG}-rtsp-stream-fixer:6666/6667` to access the stream/thumbnails.
