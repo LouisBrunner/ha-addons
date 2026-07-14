@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 FROM ghcr.io/bluesky-social/pds:0.4.5009 AS pds
 
 FROM ghcr.io/home-assistant/base:3.23
-RUN apk add --no-cache caddy nodejs-current openssl curl==8.19.0-r0 netcat-openbsd==1.234.1-r0
+RUN apk add --no-cache caddy nodejs-current openssl curl~8.19.0 netcat-openbsd~1.234.1
 
 ENV S6_STAGE2_HOOK=/etc/s6-overlay/scripts/stage2-hook.sh
 

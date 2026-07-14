@@ -30,9 +30,7 @@ ifeq ($(INSIDE_DOCKER),1)
 	@echo "> Unsupported inside the container"
 else
 	@echo "# Developing $(TARGET)"
-	@make TARGET=$(TARGET) rebuild
-	@echo "# Watching for changes..."
-	@fswatch $(TARGET) | xargs -I{} make TARGET=$(TARGET) rebuild
+	hot -d $(TARGET) make TARGET=$(TARGET) rebuild
 endif
 .PHONY: dev
 
