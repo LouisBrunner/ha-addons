@@ -3,7 +3,7 @@ services:
   devcontainer:
     build:
       dockerfile_inline: |
-        FROM ghcr.io/home-assistant/devcontainer:5-apps
+        FROM ghcr.io/home-assistant/devcontainer:6-apps
         ARG PDS_VERSION=v0.4.5009
         RUN mkdir -p /usr/local/lib/pdsadmin \
           && curl -fsSL https://raw.githubusercontent.com/bluesky-social/pds/$${PDS_VERSION}/pdsadmin.sh \
