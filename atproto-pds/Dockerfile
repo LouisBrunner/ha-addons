@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.17
 
 # FROM fatfingers23/pds_gatekeeper:0.1.0.7 AS gatekeeper # FIXME: can't use, glibc
-FROM rust:1.89.0-alpine3.22 AS gatekeeper
+FROM rust:1.96.1-alpine3.22 AS gatekeeper
 RUN apk add --no-cache musl-dev pkgconf openssl-dev openssl-libs-static
 WORKDIR /app
 #checkov:skip=CKV_DOCKER_4: same behavior as COPY + extraction
@@ -14,7 +14,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 
 FROM ghcr.io/bluesky-social/pds:0.4.5009 AS pds
 
-FROM ghcr.io/home-assistant/base:3.23
+FROM ghcr.io/home-assistant/base:3.24
 RUN apk add --no-cache caddy nodejs-current openssl curl~8.19.0 netcat-openbsd~1.234.1
 
 ENV S6_STAGE2_HOOK=/etc/s6-overlay/scripts/stage2-hook.sh
