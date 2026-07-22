@@ -8,7 +8,7 @@ require (
 	github.com/pion/rtp v1.10.3
 	github.com/sirupsen/logrus v1.9.4
 	github.com/y9o/go-openh264 v0.2.0
-	golang.org/x/image v0.43.0
+	golang.org/x/image v0.44.0
 )
 
 require (
