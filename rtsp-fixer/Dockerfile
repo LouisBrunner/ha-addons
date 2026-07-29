@@ -1,4 +1,4 @@
-FROM golang:1.26.4-alpine3.24 AS go-builder
+FROM golang:1.26.5-alpine3.24 AS go-builder
 RUN apk add --no-cache gcc~15.2.0 musl-dev~1.2.6
 WORKDIR /code
 RUN go env
@@ -14,7 +14,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
   --mount=type=cache,target=/go/pkg/mod \
   go build ./cmd/server
 
-FROM ghcr.io/home-assistant/base:3.23-2026.06.1
+FROM ghcr.io/home-assistant/base:3.24-2026.06.1
 RUN apk add --no-cache openh264~2.6.0 netcat-openbsd~1.234.1
 COPY --from=go-build /code/server /server
 COPY --chmod=755 run.sh /run.sh
