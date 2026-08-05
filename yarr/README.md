@@ -1,0 +1,10 @@
+# yarr Add-on ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield]
+
+![Logo](logo.png)
+
+[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
+[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
+
+Minimal self-hosted RSS reader with mandatory OIDC login, for Home Assistant.
+
+See [documentation (Home Assistant)](./documentation) or [documentation (GitHub)](./DOCS.md) for details.

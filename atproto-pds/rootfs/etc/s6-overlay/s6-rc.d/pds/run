@@ -20,6 +20,7 @@ if ! bashio::fs.file_exists "${SECRETS_FILE}"; then
 	printf "export PDS_JWT_SECRET=%s\nexport PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=%s\n" "${jwt_secret}" "${plc_key}" >"${SECRETS_FILE}"
 	bashio::log.info "Secrets written to ${SECRETS_FILE}"
 fi
+chmod 600 "${SECRETS_FILE}"
 # shellcheck source=/dev/null
 source "${SECRETS_FILE}"
 

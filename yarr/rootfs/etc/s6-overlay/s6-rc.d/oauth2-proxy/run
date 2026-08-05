@@ -1,0 +1,50 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+set -eo pipefail
+
+source /etc/s6-overlay/scripts/logging.sh
+
+bashio::config.require 'hostname'
+bashio::config.require 'oidc.issuer'
+bashio::config.require 'oidc.client_id'
+bashio::config.require.safe_password 'oidc.client_secret'
+
+HOSTNAME="$(bashio::config 'hostname')"
+if [[ "${HOSTNAME}" == *"://"* || "${HOSTNAME}" == *"/"* ]]; then
+	bashio::log.fatal "hostname must not include a scheme or path, e.g. 'rss.mydomain.com' not 'https://rss.mydomain.com/'"
+	exit 1
+fi
+
+COOKIE_SECRET_FILE=/data/cookie_secret
+if ! bashio::fs.file_exists "${COOKIE_SECRET_FILE}"; then
+	bashio::log.info "First run: generating cookie secret..."
+	openssl rand -base64 32 | tr -- '+/' '-_' | tr -d '\n' >"${COOKIE_SECRET_FILE}"
+	chmod 600 "${COOKIE_SECRET_FILE}"
+fi
+OAUTH2_PROXY_COOKIE_SECRET="$(cat "${COOKIE_SECRET_FILE}")"
+export OAUTH2_PROXY_COOKIE_SECRET
+
+export OAUTH2_PROXY_HTTP_ADDRESS=127.0.0.1:4180
+export OAUTH2_PROXY_PROVIDER=oidc
+export OAUTH2_PROXY_OIDC_ISSUER_URL="$(bashio::config 'oidc.issuer')"
+export OAUTH2_PROXY_CLIENT_ID="$(bashio::config 'oidc.client_id')"
+export OAUTH2_PROXY_CLIENT_SECRET="$(bashio::config 'oidc.client_secret')"
+export OAUTH2_PROXY_COOKIE_DOMAINS="${HOSTNAME}"
+export OAUTH2_PROXY_WHITELIST_DOMAINS="${HOSTNAME}"
+export OAUTH2_PROXY_SCOPE="openid email profile groups"
+export OAUTH2_PROXY_EMAIL_DOMAINS="*"
+export OAUTH2_PROXY_REVERSE_PROXY=true
+export OAUTH2_PROXY_TRUSTED_PROXY_IPS=127.0.0.1
+export OAUTH2_PROXY_SET_XAUTHREQUEST=true
+export OAUTH2_PROXY_OIDC_GROUPS_CLAIM=groups
+export OAUTH2_PROXY_CODE_CHALLENGE_METHOD=S256
+export OAUTH2_PROXY_UPSTREAMS="static://200"
+export OAUTH2_PROXY_SILENCE_PING_LOGGING=true
+
+if bashio::config.has_value 'oidc.provider_name'; then
+	export OAUTH2_PROXY_PROVIDER_DISPLAY_NAME="$(bashio::config 'oidc.provider_name')"
+fi
+
+bashio::log.info "Starting oauth2-proxy on 127.0.0.1:4180..."
+print_env
+exec oauth2-proxy

@@ -9,7 +9,9 @@ all:
 
 setup:
 ifeq ($(INSIDE_DOCKER),1)
+	ha apps install local_$(TARGET)
 else
+	docker compose exec -T devcontainer make TARGET=$(TARGET) setup
 endif
 .PHONY: setup
 
@@ -37,7 +39,7 @@ endif
 rebuild:
 ifeq ($(INSIDE_DOCKER),1)
 	@echo -n '> '
-	ha apps rebuild local_$(TARGET) && ha apps start local_$(TARGET)
+	ha apps rebuild --force local_$(TARGET) && ha apps start local_$(TARGET)
 else
 	docker compose exec -T devcontainer make TARGET=$(TARGET) rebuild
 endif

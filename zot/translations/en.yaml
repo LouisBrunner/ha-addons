@@ -1,0 +1,272 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-translations.schema.json
+---
+configuration:
+  external_url:
+    name: External URL
+    description: >-
+      Public URL of this Zot instance, e.g. `https://zot.mydomain.com`
+  blob_upload_timeout:
+    name: Blob Upload Timeout
+    description: >-
+      Max time to read/write a single blob chunk before aborting the upload, raise this on slow links
+  oidc:
+    name: OIDC
+    description: >-
+      OIDC provider settings for web UI login
+    fields:
+      issuer:
+        name: Issuer URL
+        description: >-
+          Your OIDC provider's issuer URL, e.g. `https://auth.mydomain.com`
+      client_id:
+        name: Client ID
+        description: >-
+          Client ID from the OIDC client created in your provider
+      client_secret:
+        name: Client Secret
+        description: >-
+          Client secret from the OIDC client created in your provider
+      provider_name:
+        name: Provider Display Name
+        description: >-
+          Name shown on the login button
+      username_claim:
+        name: Username Claim
+        description: >-
+          OIDC claim used as the identity for access control
+      admin_identities:
+        name: Admin Identities
+        description: >-
+          Values of the username claim (e.g. `alice`) granted full admin access
+      admin_groups:
+        name: Admin Groups
+        description: >-
+          OIDC group names granted full admin access
+  anonymous_read:
+    name: Allow Anonymous Read
+    description: >-
+      Allow unauthenticated pulls from the registry
+  readonly_groups:
+    name: Read-only Groups
+    description: >-
+      OIDC group names granted global read access
+  readonly_identities:
+    name: Read-only Identities
+    description: >-
+      Values of the username claim granted global read access
+  repositories:
+    name: Per-repository Access
+    description: >-
+      Overrides for specific repositories/patterns, e.g. `myteam/**`
+    fields:
+      pattern:
+        name: Repository Pattern
+        description: >-
+          Glob pattern of the repositories this entry applies to, e.g. `myteam/**`
+      readonly_identities:
+        name: Read-only Identities
+        description: >-
+          Values of the username claim granted read access to this pattern
+      readonly_groups:
+        name: Read-only Groups
+        description: >-
+          OIDC group names granted read access to this pattern
+      anonymous_read:
+        name: Allow Anonymous Read
+        description: >-
+          Allow unauthenticated pulls for this pattern (overrides global)
+  storage:
+    name: Storage configuration
+    fields:
+      gc:
+        name: Enable Garbage Collection
+        description: >-
+          Periodically clean up unreferenced blobs
+      gc_delay:
+        name: Garbage Collection Delay
+        description: >-
+          How long to wait before garbage collecting an unreferenced blob, e.g. `1h`
+      dedupe:
+        name: Enable Deduplication
+        description: >-
+          Deduplicate identical blobs across repositories to save space
+      retention:
+        name: Tag Retention
+        description: >-
+          Automatically delete old tags/images by policy
+        fields:
+          enabled:
+            name: Enable Retention
+            description: >-
+              Delete tags/images matching the policies below
+          delay:
+            name: Delay
+            description: >-
+              How long to wait before removing untagged images/referrers, e.g. `24h`
+          policies:
+            name: Policies
+            description: >-
+              List of retention policies, evaluated per matching repository
+            fields:
+              repositories:
+                name: Repositories
+                description: >-
+                  Repository glob patterns this policy applies to, e.g. `staging/**`
+              delete_untagged:
+                name: Delete Untagged
+                description: >-
+                  Delete images with no tags
+              delete_referrers:
+                name: Delete Referrers
+                description: >-
+                  Delete referrers (e.g. signatures, SBOMs) of deleted images
+              keep_tags:
+                name: Keep Tags
+                description: >-
+                  Tag patterns to keep; images not matching any are deleted
+                fields:
+                  patterns:
+                    name: Patterns
+                    description: >-
+                      Regex patterns of tags to keep, e.g. `v.*`
+                  pulled_within:
+                    name: Pulled Within
+                    description: >-
+                      Keep only if pulled within this duration, e.g. `720h`
+                  pushed_within:
+                    name: Pushed Within
+                    description: >-
+                      Keep only if pushed within this duration, e.g. `720h`
+                  most_recently_pushed_count:
+                    name: Most Recently Pushed Count
+                    description: >-
+                      Keep only the N most recently pushed matching tags
+  metrics_enabled:
+    name: Enable Metrics
+    description: >-
+      Expose a Prometheus-compatible `/metrics` endpoint
+  cve:
+    name: Vulnerability Scanning
+    description: >-
+      Scan pushed images for CVEs via Trivy, needs outbound internet access
+    fields:
+      enabled:
+        name: Enable Vulnerability Scanning
+        description: >-
+          Scan images and show results in the web UI
+      update_interval:
+        name: Database Update Interval
+        description: >-
+          How often to refresh the vulnerability database, e.g. `24h`
+  rate_limit:
+    name: Rate Limiting
+    description: >-
+      Limit the request rate accepted by the registry
+    fields:
+      enabled:
+        name: Enable Rate Limiting
+        description: >-
+          Reject requests once the configured rate is exceeded
+      requests_per_second:
+        name: Requests Per Second
+        description: >-
+          Maximum requests per second, for methods not overridden below
+      per_method:
+        name: Per-method Overrides
+        description: >-
+          Override the request rate for specific HTTP methods, e.g. `PUT`
+        fields:
+          method:
+            name: Method
+            description: >-
+              HTTP method to override, e.g. `GET`, `PUT`
+          requests_per_second:
+            name: Requests Per Second
+            description: >-
+              Maximum requests per second accepted for this method
+  webhooks:
+    name: Webhooks
+    description: >-
+      HTTP endpoints notified via CloudEvents of registry events (pushes, deletions, etc.)
+    fields:
+      url:
+        name: URL
+        description: >-
+          Webhook endpoint URL
+      username:
+        name: Username
+        description: >-
+          Basic auth username to send with the webhook request
+      password:
+        name: Password
+        description: >-
+          Basic auth password to send with the webhook request
+      token:
+        name: Bearer Token
+        description: >-
+          Bearer token to send with the webhook request, instead of basic auth
+  lint:
+    name: Lint configuration
+    description: >-
+      Require specific annotations to be present on images before they can be pushed
+    fields:
+      enabled:
+        name: Enable Lint
+        description: >-
+          Reject pushes that are missing mandatory annotations
+      mandatory_annotations:
+        name: Mandatory Annotations
+        description: >-
+          List of annotation keys that must be present, e.g. `org.opencontainers.image.source`
+  scrub:
+    name: Scrub configuration
+    description: >-
+      Periodic integrity check of stored blobs
+    fields:
+      enabled:
+        name: Enable Scrub
+        description: >-
+          Periodically verify stored blob integrity
+      interval:
+        name: Interval
+        description: >-
+          Time between scrub runs, minimum `2h`, e.g. `24h`
+  sync:
+    name: Registry Mirroring (sync)
+    description: >-
+      Mirror one or more upstream registries
+    fields:
+      url:
+        name: Upstream URL
+        description: >-
+          URL of the upstream registry to mirror, e.g. `https://registry-1.docker.io`
+      on_demand:
+        name: Sync On-Demand
+        description: >-
+          Pull an image from upstream the first time it's requested locally
+      poll_interval:
+        name: Poll Interval
+        description: >-
+          Periodically re-sync matching content on this interval, e.g. `6h` (requires Content Prefix)
+      content_prefix:
+        name: Content Prefix
+        description: >-
+          Repository prefix to mirror periodically, e.g. `library/**`
+      content_destination:
+        name: Content Destination
+        description: >-
+          Local repository prefix to mirror the content into, defaults to the same prefix
+      username:
+        name: Username
+        description: >-
+          Username to authenticate to this upstream registry
+      password:
+        name: Password
+        description: >-
+          Password to authenticate to this upstream registry
+  debug:
+    name: Debug Mode
+    description: >-
+      Enable verbose diagnostic logging
+network:
+  5000/tcp: Zot (HTTP, registry API + web UI)

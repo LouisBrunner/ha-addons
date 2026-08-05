@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.4
+
+Restrict `/data/secrets.env` to `chmod 600` (was created with default/world-readable permissions).
+
 ## 0.0.3
 
 Mask `smtp_url` and `gatekeeper.captcha.hcaptcha_secret_key` in the UI/logs by typing them as `password` (they carry credentials).

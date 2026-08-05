@@ -69,7 +69,7 @@ configuration:
   debug:
     name: Debug Mode
     description: >-
-      Enables debug logging, used mostly for development or debugging purposes
+      Enable verbose diagnostic logging
 network:
   3000/tcp: Caddy (HTTP)
   3001/tcp: PDS (TCP)

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
+name: "yarr"
+description: "Minimal self-hosted RSS reader (yet another rss reader)"
+version: "0.0.1"
+slug: "yarr"
+url: "https://github.com/LouisBrunner/ha-addons/blob/main/yarr"
+# image: ghcr.io/louisbrunner/ha-yarr
+init: false
+arch:
+  - aarch64
+  - amd64
+options:
+  hostname: ""
+  oidc:
+    issuer: ""
+    client_id: ""
+    client_secret: ""
+    provider_name: ""
+  base_path: ""
+  debug: false
+schema:
+  hostname: str
+  oidc:
+    issuer: str
+    client_id: str
+    client_secret: password
+    provider_name: str?
+  base_path: str?
+  debug: bool?
+ports:
+  3000/tcp: null

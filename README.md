@@ -7,3 +7,5 @@
 - [RTSP Stream Fixer](./rtsp-fixer): fix non-standard RTSP streams for your legacy cameras
 - [AT Protocol PDS](./atproto-pds): self-hosted AT Protocol Personal Data Server for Bluesky and the atproto ecosystem
 - [Tangled Knot](./tangled-knot): self-hosted Git repository hosting on the AT Protocol
+- [Zot](./zot): self-hosted OCI/Docker container registry with a web UI
+- [yarr](./yarr): minimal self-hosted RSS reader

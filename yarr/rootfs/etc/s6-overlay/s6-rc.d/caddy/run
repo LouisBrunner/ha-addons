@@ -4,7 +4,14 @@ set -e
 
 source /etc/s6-overlay/scripts/logging.sh
 
-bashio::log.debug "Full config: $(bashio::addon.config)"
+bashio::config.require 'hostname'
+HOSTNAME="$(bashio::config 'hostname')"
+if [[ "${HOSTNAME}" == *"://"* || "${HOSTNAME}" == *"/"* ]]; then
+	bashio::log.fatal "hostname must not include a scheme or path, e.g. 'rss.mydomain.com' not 'https://rss.mydomain.com/'"
+	exit 1
+fi
+
+bashio::log.debug "Full config: $(bashio::addon.config | jq '.oidc.client_secret = "***REDACTED***"')"
 
 bashio::log.info "Generating Caddyfile from template"
 bashio::addon.config | tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile

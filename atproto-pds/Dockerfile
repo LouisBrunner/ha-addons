@@ -2,7 +2,7 @@
 
 # FROM fatfingers23/pds_gatekeeper:0.1.0.7 AS gatekeeper # FIXME: can't use, glibc
 FROM rust:1.89.0-alpine3.22 AS gatekeeper
-RUN apk add --no-cache musl-dev pkgconf openssl-dev openssl-libs-static
+RUN apk add --no-cache musl-dev~1.2.5 pkgconf~2.4.3 openssl-dev~3.5.7 openssl-libs-static~3.5.7
 WORKDIR /app
 #checkov:skip=CKV_DOCKER_4: same behavior as COPY + extraction
 ADD --unpack https://tangled.org/did:plc:p3aqxmyn6f3pkm4dcl5co5gp/archive/eef639e04811b734f426548a63fc8911886c3b48?format=tar.gz /src
@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 FROM ghcr.io/bluesky-social/pds:0.4.5009 AS pds
 
 FROM ghcr.io/home-assistant/base:3.23
-RUN apk add --no-cache caddy nodejs-current openssl curl~8.19.0 netcat-openbsd~1.234.1
+RUN apk add --no-cache caddy~2.11.4 nodejs-current~24.15.0 openssl~3.5.7 curl~8.19.0 netcat-openbsd~1.234.1
 
 ENV S6_STAGE2_HOOK=/etc/s6-overlay/scripts/stage2-hook.sh
 

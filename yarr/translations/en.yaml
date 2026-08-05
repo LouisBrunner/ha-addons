@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-translations.schema.json
+---
+configuration:
+  hostname:
+    name: Hostname
+    description: >-
+      Public hostname this instance is reached at, e.g. `rss.mydomain.com` (no scheme/path)
+  oidc:
+    name: OIDC
+    description: >-
+      OIDC provider settings for login (no local account is available)
+    fields:
+      issuer:
+        name: Issuer URL
+        description: >-
+          Your OIDC provider's issuer URL, e.g. `https://auth.mydomain.com`
+      client_id:
+        name: Client ID
+        description: >-
+          Client ID from the OIDC client created in your provider
+      client_secret:
+        name: Client Secret
+        description: >-
+          Client secret from the OIDC client created in your provider
+      provider_name:
+        name: Provider Display Name
+        description: >-
+          Name shown on the login button
+  base_path:
+    name: Base Path (optional)
+    description: >-
+      Mount yarr under a URL sub-path (e.g. `/rss`) instead of the root
+  debug:
+    name: Debug Mode
+    description: >-
+      Enable verbose diagnostic logging
+network:
+  3000/tcp: yarr (HTTP)
