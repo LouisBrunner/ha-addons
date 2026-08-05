@@ -24,6 +24,7 @@ fi
 OAUTH2_PROXY_COOKIE_SECRET="$(cat "${COOKIE_SECRET_FILE}")"
 export OAUTH2_PROXY_COOKIE_SECRET
 
+PROVIDER_NAME="$(bashio::config 'oidc.provider_name')"
 ISSUER_URL="$(bashio::config 'oidc.issuer')"
 CLIENT_ID="$(bashio::config 'oidc.client_id')"
 CLIENT_SECRET="$(bashio::config 'oidc.client_secret')"
@@ -46,7 +47,7 @@ export OAUTH2_PROXY_UPSTREAMS="static://200"
 export OAUTH2_PROXY_SILENCE_PING_LOGGING=true
 
 if bashio::config.has_value 'oidc.provider_name'; then
-	export OAUTH2_PROXY_PROVIDER_DISPLAY_NAME="$(bashio::config 'oidc.provider_name')"
+	export OAUTH2_PROXY_PROVIDER_DISPLAY_NAME="${PROVIDER_NAME}"
 fi
 
 bashio::log.info "Starting oauth2-proxy on 127.0.0.1:4180..."
