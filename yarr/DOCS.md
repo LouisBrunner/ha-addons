@@ -1,8 +1,9 @@
 # yarr
 
-Self-hosted [yarr](https://github.com/nkanaev/yarr) ("yet another rss reader") — a minimal RSS/Atom feed aggregator: single Go binary, embedded SQLite, no external database, no themes/extensions/feature creep.
+Self-hosted [yarr](https://github.com/nkanaev/yarr) ("yet another RSS reader"), a minimal RSS/Atom feed aggregator:
+single Go binary, embedded SQLite, no external database, no themes/extensions/feature creep.
 
-Login is via OIDC only — set your provider's details below and there's nothing else to run or configure.
+Login is via OIDC only, set your provider's details below and there's nothing else to run or configure.
 
 ## Prerequisites
 
@@ -11,28 +12,28 @@ Login is via OIDC only — set your provider's details below and there's nothing
 
 ## Configuration
 
-| Option                  | Required | Description                                                                |
-| ------------------------ | -------- | ---------------------------------------------------------------------------- |
-| `hostname`               | Yes      | Public hostname, e.g. `rss.mydomain.com` — no `https://` or trailing path, the add-on refuses to start otherwise |
-| `oidc.issuer`            | Yes      | Your OIDC provider's issuer URL                                            |
-| `oidc.client_id`         | Yes      | OIDC client ID                                                             |
-| `oidc.client_secret`     | Yes      | OIDC client secret                                                         |
-| `oidc.provider_name`     | No       | Display name on the login button                                          |
-| `base_path`              | No       | Mount yarr under a URL sub-path (e.g. `/rss`) instead of the root         |
-| `debug`                  | No       | Enable verbose diagnostic logging |
+| Option               | Required | Description                                                                                                     |
+| -------------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
+| `hostname`           | Yes      | Public hostname, e.g. `rss.mydomain.com`, no `https://` or trailing path, the add-on refuses to start otherwise |
+| `oidc.issuer`        | Yes      | Your OIDC provider's issuer URL                                                                                 |
+| `oidc.client_id`     | Yes      | OIDC client ID                                                                                                  |
+| `oidc.client_secret` | Yes      | OIDC client secret                                                                                              |
+| `oidc.provider_name` | No       | Display name on the login button                                                                                |
+| `base_path`          | No       | Mount yarr under a URL sub-path (e.g. `/rss`) instead of the root                                               |
+| `debug`              | No       | Enable verbose diagnostic logging                                                                               |
 
 Your OIDC provider must support standard auto-discovery.
 
 ## Ports
 
-Only `3000/tcp` matters — point your reverse proxy/tunnel at it (e.g. `http://{SLUG}-yarr:3000`). It's not exposed to the host by default.
+Only `3000/tcp` matters, point your reverse proxy/tunnel at it (e.g. `http://{SLUG}-yarr:3000`). It's not exposed to the host by default.
 
 ## Persistent data
 
-| Path                  | Contents                                             |
-| ---------------------- | ------------------------------------------------------- |
-| `/data/yarr.db`        | SQLite database (feeds, articles)                    |
-| `/data/cookie_secret`  | Login session signing key, generated once on first run — losing it just logs everyone out |
+| Path                  | Contents                                                                                 |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| `/data/yarr.db`       | SQLite database (feeds, articles)                                                        |
+| `/data/cookie_secret` | Login session signing key, generated once on first run, losing it just logs everyone out |
 
 ## Limitations
 

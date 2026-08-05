@@ -4,7 +4,7 @@ description: "Self-hosted OCI/Docker container registry with a web UI (Zot + ZUI
 version: "0.0.1"
 slug: "zot"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/zot"
-# image: ghcr.io/louisbrunner/ha-zot
+image: ghcr.io/louisbrunner/ha-zot
 init: false
 arch:
   - aarch64

@@ -76,6 +76,7 @@ If the OIDC provider is down, existing keys keep working but no one can log in o
 - `oidc.admin_identities`/`admin_groups` get full CRUD on all repositories regardless of anything below (Zot's `adminPolicy`).
 - `readonly_identities`/`readonly_groups` and `anonymous_read` are the global/default policy, applied to any repository not matched by a `repositories` entry.
 - `repositories` overrides per pattern:
+
   ```yaml
   repositories:
     - pattern: team/**
@@ -89,10 +90,12 @@ If the OIDC provider is down, existing keys keep working but no one can log in o
       readonly_groups: []
       anonymous_read: true
   ```
+
   `readonly_identities` are username-claim values, `readonly_groups` are OIDC group names, both matched live against the session.
 
 > [!IMPORTANT]
-> A matching `repositories` pattern fully replaces the global (`**`) policy for that repo, it doesn't add to it. A user only in the global `readonly_identities` gets `403` on a repo matched by a pattern that doesn't also list them. List them in both places if you want both.
+> A matching `repositories` pattern fully replaces the global (`**`) policy for that repo, it doesn't add to it.
+> A user only in the global `readonly_identities` gets `403` on a repo matched by a pattern that doesn't also list them. List them in both places if you want both.
 
 ## Webhooks
 

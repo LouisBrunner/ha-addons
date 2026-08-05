@@ -4,7 +4,7 @@ description: "Minimal self-hosted RSS reader (yet another rss reader)"
 version: "0.0.1"
 slug: "yarr"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/yarr"
-# image: ghcr.io/louisbrunner/ha-yarr
+image: ghcr.io/louisbrunner/ha-yarr
 init: false
 arch:
   - aarch64
