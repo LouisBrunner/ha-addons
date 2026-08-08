@@ -9,3 +9,5 @@
 - [Tangled Knot](./tangled-knot): self-hosted Git repository hosting on the AT Protocol
 - [Zot](./zot): self-hosted OCI/Docker container registry with a web UI
 - [yarr](./yarr): minimal self-hosted RSS reader
+- [SplitPro](./splitpro): self-hosted expense splitting (Splitwise alternative)
+- [Fusion](./fusion): lightweight self-hosted RSS reader with native OIDC login

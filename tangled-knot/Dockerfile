@@ -2,15 +2,15 @@ FROM atcr.io/tangled.org/knot:v1.15.0-alpha
 ARG BASHIO_VERSION=v0.18.1
 
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN apk add --no-cache curl~8.21.0 jq~1.8.1 openssl~3.5.7 bash~5.3.9 \
+RUN apk add --no-cache curl~8.21.0 jq~1.8.1 openssl~3.5.7 bash~5.3.9 netcat-openbsd~1.234.1 \
   && mkdir -p /usr/lib/bashio \
   && curl -fsSL "https://github.com/hassio-addons/bashio/archive/${BASHIO_VERSION}.tar.gz" \
   | tar -xzm --strip-components=2 -C /usr/lib/bashio && ln -s /usr/lib/bashio/bashio /usr/bin/bashio
 
 CMD ["/run.sh"]
 
-# TODO: replace with a real check once tangled-knot is developed further
-HEALTHCHECK CMD true
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
+  CMD nc -z 127.0.0.1 5555
 
 ARG BUILD_ARCH
 ARG BUILD_DATE
@@ -28,7 +28,7 @@ LABEL \
   maintainer="Louis Brunner <opensource@e.lbrunner.net>" \
   org.opencontainers.image.title="${BUILD_NAME}" \
   org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
-  org.opencontainers.image.vendor="Louis Brunner " \
+  org.opencontainers.image.vendor="Louis Brunner's Home Assistant Apps" \
   org.opencontainers.image.authors="Louis Brunner <opensource@e.lbrunner.net>" \
   org.opencontainers.image.licenses="MPL-2.0" \
   org.opencontainers.image.url="https://github.com/${BUILD_REPOSITORY}" \

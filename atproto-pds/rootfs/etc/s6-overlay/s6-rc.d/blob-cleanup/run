@@ -1,0 +1,18 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+set -e
+
+source /etc/s6-overlay/scripts/logging.sh
+
+PDS_BLOBSTORE_DISK_LOCATION=/data/blobs
+TEMPT_DIR="${PDS_BLOBSTORE_DISK_LOCATION}/tempt"
+
+while true; do
+	if [ -d "${TEMPT_DIR}" ]; then
+		deleted="$(find "${TEMPT_DIR}" -type f -mtime +1 -print -delete | wc -l | tr -d ' ')"
+		if [ "${deleted}" -gt 0 ]; then
+			bashio::log.info "blob-cleanup: purged ${deleted} untethered blob(s) older than 1 day from ${TEMPT_DIR}"
+		fi
+	fi
+	sleep 21600
+done

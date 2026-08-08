@@ -30,12 +30,16 @@ Only `3000/tcp` matters, point your reverse proxy/tunnel at it (e.g. `http://{SL
 
 ## Persistent data
 
-| Path                  | Contents                                                                                 |
-| --------------------- | ---------------------------------------------------------------------------------------- |
-| `/data/yarr.db`       | SQLite database (feeds, articles)                                                        |
-| `/data/cookie_secret` | Login session signing key, generated once on first run, losing it just logs everyone out |
+| Path                  | Contents                                                                                                   |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `/data/yarr.db`       | SQLite database (feeds, articles)                                                                          |
+| `/data/cookie_secret` | Login session signing key, generated once on first run, losing it just logs everyone out                   |
+| `/data/fever_auth`    | Fever API username/password, generated once on first run (see [Mobile clients](#mobile-clients-fever-api)) |
+
+## Mobile clients (Fever API)
+
+Fever-compatible clients (Reeder, Unread, FeedMe) authenticate per-request with their own username/password, stored in `/data/fever_auth` (format `username:password`); the username is always `fever`. Enter the hostname, `fever`, and that password into your client's Fever setup screen.
 
 ## Limitations
 
 - **No multi-user support**: everyone who logs in shares the same feed list, read/unread state, and settings. For separate feed lists per person, run separate instances.
-- **Mobile RSS clients (Fever API) aren't supported**: apps like Reeder authenticate per-request with their own credentials, which doesn't work with OIDC login. No workaround currently.

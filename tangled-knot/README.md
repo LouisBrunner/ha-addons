@@ -2,9 +2,9 @@
 
 ![Logo](logo.png)
 
+[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
+[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
+
 Self-hosted Tangled knot server (Git hosting on AT Protocol) for Home Assistant.
 
 See [documentation (Home Assistant)](./documentation) or [documentation (GitHub)](./DOCS.md) for details.
-
-[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
-[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg

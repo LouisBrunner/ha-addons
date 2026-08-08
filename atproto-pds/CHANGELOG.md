@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.5
+
+Add automatic untethered blob cleanup.
+
 ## 0.0.4
 
 Restrict `/data/secrets.env` to `chmod 600` (was created with default/world-readable permissions).

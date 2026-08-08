@@ -9,6 +9,13 @@
 	log
 
 	route {
+		handle /fever {
+			reverse_proxy http://127.0.0.1:7070
+		}
+		handle /fever/* {
+			reverse_proxy http://127.0.0.1:7070
+		}
+
 		handle /oauth2/* {
 			reverse_proxy http://127.0.0.1:4180 {
 				header_up X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}
@@ -28,6 +35,7 @@
 
 				reverse_proxy http://127.0.0.1:7070 {
 					header_up X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}
+					header_up Cookie "auth={{ .yarr_auth_cookie }}"
 				}
 			}
 

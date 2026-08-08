@@ -2,7 +2,7 @@
 FROM ghcr.io/project-zot/zot:v2.1.18 AS zot
 
 FROM ghcr.io/home-assistant/base:3.23
-RUN apk add --no-cache jq~1.8.1 curl~8.19.0 gcompat~1.1.0 openssl~3.5.7
+RUN apk add --no-cache jq~1.8.1 curl~8.19.0 gcompat~1.1.0 openssl~3.5.7 netcat-openbsd~1.234.1
 
 ARG TARGETARCH
 COPY --from=zot /usr/local/bin/zot-linux-${TARGETARCH} /usr/bin/zot
@@ -36,4 +36,4 @@ LABEL \
   org.opencontainers.image.version=${BUILD_VERSION}
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-  CMD status="$(curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:5000/v2/)"; [ "${status}" = "200" ] || [ "${status}" = "401" ]
+  CMD nc -z 127.0.0.1 5000
