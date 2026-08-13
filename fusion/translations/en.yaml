@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-translations.schema.json
+---
+configuration:
+  external_url:
+    name: External URL
+    description: >-
+      Public URL this instance is reached at, including scheme, e.g. `https://fusion.mydomain.com`
+  oidc:
+    name: OIDC
+    description: >-
+      OIDC provider settings for login
+    fields:
+      issuer:
+        name: Issuer URL
+        description: >-
+          Your OIDC provider's issuer URL, e.g. `https://auth.mydomain.com`
+      client_id:
+        name: Client ID
+        description: >-
+          Client ID from the OIDC client created in your provider
+      client_secret:
+        name: Client Secret
+        description: >-
+          Client secret from the OIDC client created in your provider
+      allowed_user:
+        name: Allowed User (optional)
+        description: >-
+          Restrict login to a single identity (email or subject claim from your OIDC provider)
+  fever_username:
+    name: Fever API Username (optional)
+    description: >-
+      Username for Fever-compatible mobile clients (Reeder, Unread, FeedMe); the API key is derived from this and your OIDC login is unaffected
+  allow_private_feeds:
+    name: Allow Private Feeds (optional)
+    description: >-
+      Allow pulling feed URLs on private/localhost networks
+  debug:
+    name: Debug Mode
+    description: >-
+      Enable verbose diagnostic logging
+network:
+  8080/tcp: Fusion (HTTP)

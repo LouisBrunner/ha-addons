@@ -1,0 +1,39 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+set -e
+
+source /etc/s6-overlay/scripts/logging.sh
+
+PGDATA=/data/postgres
+mkdir -p "${PGDATA}"
+chown -R postgres:postgres /data
+chmod 700 "${PGDATA}"
+
+mkdir -p /run/postgresql
+chown postgres:postgres /run/postgresql
+
+if [[ ! -s "${PGDATA}/PG_VERSION" ]]; then
+	bashio::log.info "First run: initializing database..."
+	s6-setuidgid postgres initdb -D "${PGDATA}" -U postgres --auth-local=trust --auth-host=trust --no-instructions >/dev/null
+
+	cat >"${PGDATA}/pg_hba.conf" <<EOF
+local all all trust
+host  all all 127.0.0.1/32 trust
+EOF
+
+	bashio::log.info "Bootstrapping splitpro role, database and pg_cron extension..."
+	s6-setuidgid postgres pg_ctl -D "${PGDATA}" -o "-c listen_addresses=''" -w start >/dev/null
+	s6-setuidgid postgres psql -U postgres -c "CREATE ROLE splitpro LOGIN;" >/dev/null
+	s6-setuidgid postgres psql -U postgres -c "CREATE DATABASE splitpro OWNER splitpro;" >/dev/null
+	s6-setuidgid postgres psql -U postgres -d splitpro -c "CREATE EXTENSION pg_cron;" >/dev/null
+	s6-setuidgid postgres pg_ctl -D "${PGDATA}" -m fast -w stop >/dev/null
+fi
+
+bashio::log.info "Starting PostgreSQL on 127.0.0.1:5432..."
+print_env
+exec s6-setuidgid postgres postgres \
+	-D "${PGDATA}" \
+	-c listen_addresses=127.0.0.1 \
+	-c shared_preload_libraries=pg_cron \
+	-c cron.database_name=splitpro \
+	-c cron.timezone=UTC

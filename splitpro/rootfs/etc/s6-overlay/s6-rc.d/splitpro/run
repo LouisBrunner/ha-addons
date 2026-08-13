@@ -1,0 +1,79 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+set -e
+
+source /etc/s6-overlay/scripts/logging.sh
+
+bashio::config.require 'external_url'
+bashio::config.require 'oidc.well_known_url'
+bashio::config.require 'oidc.client_id'
+bashio::config.require.safe_password 'oidc.client_secret'
+
+EXTERNAL_URL="$(bashio::config 'external_url')"
+if [[ "${EXTERNAL_URL}" != http://* && "${EXTERNAL_URL}" != https://* ]]; then
+	bashio::log.fatal "external_url must include a scheme, e.g. 'https://splitpro.mydomain.com'"
+	exit 1
+fi
+
+mkdir -p /data/uploads
+rm -rf /app/uploads
+ln -sfn /data/uploads /app/uploads
+
+SECRET_FILE=/data/nextauth_secret
+if ! bashio::fs.file_exists "${SECRET_FILE}"; then
+	bashio::log.info "First run: generating NextAuth secret..."
+	openssl rand -base64 32 | tr -d '\n' >"${SECRET_FILE}"
+	chmod 600 "${SECRET_FILE}"
+fi
+
+export NEXTAUTH_SECRET
+NEXTAUTH_SECRET="$(cat "${SECRET_FILE}")"
+export NEXTAUTH_URL="${EXTERNAL_URL}"
+export NEXTAUTH_URL_INTERNAL="http://127.0.0.1:3000"
+export DATABASE_URL="postgresql://splitpro@127.0.0.1:5432/splitpro"
+export PORT=3000
+export HOSTNAME=0.0.0.0
+
+# OIDC is the only supported login method for this add-on
+export DISABLE_EMAIL_SIGNUP=true
+export ENABLE_SENDING_INVITES=false
+export INVITE_ONLY=false
+
+export OIDC_CLIENT_ID
+OIDC_CLIENT_ID="$(bashio::config 'oidc.client_id')"
+export OIDC_CLIENT_SECRET
+OIDC_CLIENT_SECRET="$(bashio::config 'oidc.client_secret')"
+export OIDC_WELL_KNOWN_URL
+OIDC_WELL_KNOWN_URL="$(bashio::config 'oidc.well_known_url')"
+
+if bashio::config.has_value 'oidc.provider_name'; then
+	export OIDC_NAME
+	OIDC_NAME="$(bashio::config 'oidc.provider_name')"
+fi
+
+if bashio::config.has_value 'default_homepage'; then
+	export DEFAULT_HOMEPAGE
+	DEFAULT_HOMEPAGE="$(bashio::config 'default_homepage')"
+fi
+
+if bashio::config.has_value 'upload_max_file_size_mb'; then
+	export UPLOAD_MAX_FILE_SIZE_MB
+	UPLOAD_MAX_FILE_SIZE_MB="$(bashio::config 'upload_max_file_size_mb')"
+fi
+
+if bashio::config.has_value 'cache_cleanup.cron_rule' && bashio::config.has_value 'cache_cleanup.retention_interval'; then
+	export CLEAR_CACHE_CRON_RULE
+	CLEAR_CACHE_CRON_RULE="$(bashio::config 'cache_cleanup.cron_rule')"
+	export CACHE_RETENTION_INTERVAL
+	CACHE_RETENTION_INTERVAL="$(bashio::config 'cache_cleanup.retention_interval')"
+fi
+
+bashio::log.info "Waiting for PostgreSQL to accept connections..."
+until pg_isready -h 127.0.0.1 -p 5432 -U splitpro -d splitpro >/dev/null 2>&1; do
+	sleep 1
+done
+
+bashio::log.info "Starting SplitPro on 0.0.0.0:3000..."
+print_env
+cd /app
+exec node server.js

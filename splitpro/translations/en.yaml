@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-translations.schema.json
+---
+configuration:
+  external_url:
+    name: External URL
+    description: >-
+      Public URL this instance is reached at, including scheme, e.g. `https://splitpro.mydomain.com`
+  oidc:
+    name: OIDC
+    description: >-
+      OIDC provider settings for login (no other login method is available)
+    fields:
+      well_known_url:
+        name: Well-Known Configuration URL
+        description: >-
+          Your OIDC provider's discovery document URL, e.g. `https://auth.mydomain.com/.well-known/openid-configuration`
+      client_id:
+        name: Client ID
+        description: >-
+          Client ID from the OIDC client created in your provider
+      client_secret:
+        name: Client Secret
+        description: >-
+          Client secret from the OIDC client created in your provider
+      provider_name:
+        name: Provider Display Name
+        description: >-
+          Name shown on the login button
+  default_homepage:
+    name: Default Homepage (optional)
+    description: >-
+      Landing page shown after login, e.g. `/home` or `/balances`
+  upload_max_file_size_mb:
+    name: Max Upload Size (optional)
+    description: >-
+      Maximum receipt upload size in MB
+  cache_cleanup:
+    name: Cache Cleanup (optional)
+    description: >-
+      Scheduled cleanup of old cached bank/currency data, leave both fields blank to disable
+    fields:
+      cron_rule:
+        name: Cron Rule
+        description: >-
+          When to run cleanup, UTC, e.g. `0 2 * * 0` for weekly at 2am Sunday
+      retention_interval:
+        name: Retention Interval
+        description: >-
+          How long cached data can go unused before cleanup, e.g. `2 days`
+  debug:
+    name: Debug Mode
+    description: >-
+      Enable verbose diagnostic logging
+network:
+  3000/tcp: SplitPro (HTTP)

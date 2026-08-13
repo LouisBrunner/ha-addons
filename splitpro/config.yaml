@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
+name: "SplitPro"
+description: "Self-hosted expense splitting (Splitwise alternative) with OIDC-only login"
+version: "0.0.1"
+slug: "splitpro"
+url: "https://github.com/LouisBrunner/ha-addons/blob/main/splitpro"
+# image: ghcr.io/louisbrunner/ha-splitpro
+init: false
+arch:
+  - aarch64
+  - amd64
+options:
+  external_url: ""
+  oidc:
+    well_known_url: ""
+    client_id: ""
+    client_secret: ""
+    provider_name: ""
+  default_homepage: "/home"
+  upload_max_file_size_mb: 10
+  cache_cleanup:
+    cron_rule: ""
+    retention_interval: ""
+  debug: false
+schema:
+  external_url: str
+  oidc:
+    well_known_url: str
+    client_id: str
+    client_secret: password
+    provider_name: str?
+  default_homepage: str?
+  upload_max_file_size_mb: int?
+  cache_cleanup:
+    cron_rule: str?
+    retention_interval: str?
+  debug: bool?
+ports:
+  3000/tcp: null

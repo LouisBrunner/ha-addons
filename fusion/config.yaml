@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
+name: "Fusion"
+description: "Lightweight self-hosted RSS reader with native OIDC login"
+version: "0.0.1"
+slug: "fusion"
+# image: ghcr.io/louisbrunner/ha-fusion
+url: "https://github.com/LouisBrunner/ha-addons/blob/main/fusion"
+init: false
+arch:
+  - aarch64
+  - amd64
+options:
+  external_url: ""
+  oidc:
+    issuer: ""
+    client_id: ""
+    client_secret: ""
+    allowed_user: ""
+  fever_username: "fusion"
+  allow_private_feeds: false
+  debug: false
+schema:
+  external_url: str
+  oidc:
+    issuer: str
+    client_id: str
+    client_secret: password
+    allowed_user: str?
+  fever_username: str?
+  allow_private_feeds: bool?
+  debug: bool?
+ports:
+  8080/tcp: null
