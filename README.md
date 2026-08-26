@@ -11,3 +11,5 @@
 - [yarr](./yarr): minimal self-hosted RSS reader
 - [SplitPro](./splitpro): self-hosted expense splitting (Splitwise alternative)
 - [Fusion](./fusion): lightweight self-hosted RSS reader with native OIDC login
+- [Dashy](./dashy): self-hosted customizable dashboard/homepage with native OIDC login
+- [Glance](./glance): self-hosted customizable dashboard with OIDC-only login

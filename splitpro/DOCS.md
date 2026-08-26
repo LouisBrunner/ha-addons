@@ -17,11 +17,11 @@ Login is via OIDC only, set your provider's details below and there's nothing el
 | `oidc.well_known_url`               | Yes      | Your OIDC provider's discovery document URL                                                                          |
 | `oidc.client_id`                    | Yes      | OIDC client ID                                                                                                       |
 | `oidc.client_secret`                | Yes      | OIDC client secret                                                                                                   |
-| `oidc.provider_name`                | No       | Display name on the login button, also used in the callback URL (default: `oidc`)                                   |
+| `oidc.provider_name`                | No       | Display name on the login button                                                                                     |
 | `default_homepage`                  | No       | Landing page shown after login, e.g. `/home` or `/balances` (default: `/home`)                                      |
 | `upload_max_file_size_mb`           | No       | Maximum receipt upload size in MB (default: `10`)                                                                    |
-| `cache_cleanup.cron_rule`           | No       | When to clean up old cached bank/currency data, UTC cron syntax. Leave both cache_cleanup fields blank to disable it |
-| `cache_cleanup.retention_interval`  | No       | How long cached data can go unused before cleanup, e.g. `2 days`                                                     |
+| `cache_cleanup.cron_rule`           | No       | When to clean up old cached bank/currency data, UTC cron syntax (default: `0 2 * * 0`, weekly) |
+| `cache_cleanup.retention_interval`  | No       | How long cached data can go unused before cleanup (default: `2 days`)                                                |
 | `debug`                             | No       | Enable verbose diagnostic logging                                                                                    |
 
 ## Callback URL
@@ -46,5 +46,5 @@ Only `3000/tcp` matters, point your reverse proxy/tunnel at it (e.g. `http://{SL
 
 ## Limitations
 
-- **Login is OIDC only**: no email/magic-link or Google sign-in, this add-on is built for a closed instance behind your own identity provider.
+- **No email/magic-link or Google sign-in**: this add-on is built for a closed instance behind your own identity provider.
 - **Bank sync (Plaid), push notifications, and non-default currency providers** aren't configurable through this add-on.

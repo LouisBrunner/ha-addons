@@ -1,0 +1,18 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+set -eo pipefail
+
+source /etc/s6-overlay/scripts/logging.sh
+
+if [[ -f /etc/caddy/setup.sh ]]; then
+	source /etc/caddy/setup.sh
+fi
+
+bashio::log.info "Generating Caddyfile from template"
+bashio::addon.config \
+	| jq --argjson extra "${CADDY_EXTRA_VARS:-{}}" '. * $extra' \
+	| tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile
+bashio::log.debug "Caddyfile: $(cat /etc/caddy/Caddyfile)"
+
+bashio::log.info "Starting Caddy..."
+exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile

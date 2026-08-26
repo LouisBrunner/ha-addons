@@ -30,6 +30,11 @@ configuration:
     name: Base Path (optional)
     description: >-
       Mount yarr under a URL sub-path (e.g. `/rss`) instead of the root
+  fever_password:
+    name: Fever API Password (optional)
+    description: >-
+      Password for Fever-compatible mobile clients (Reeder, Unread, FeedMe), username is always `fever`;
+      leave unset to disable Fever API access entirely
   debug:
     name: Debug Mode
     description: >-

@@ -1,0 +1,6 @@
+hostname: ""
+oidc:
+  issuer: ""
+  client_id: ""
+  client_secret: ""
+  provider_name: ""

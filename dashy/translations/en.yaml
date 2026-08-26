@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-translations.schema.json
+---
+configuration:
+  external_url:
+    name: External URL
+    description: >-
+      Public URL this instance is reached at, including scheme, e.g. `https://dashy.mydomain.com`
+  oidc:
+    name: OIDC
+    description: >-
+      OIDC provider settings for login (public client, no client secret needed)
+    fields:
+      issuer:
+        name: Issuer URL
+        description: >-
+          Your OIDC provider's issuer URL, e.g. `https://auth.mydomain.com`
+      client_id:
+        name: Client ID
+        description: >-
+          Client ID from the OIDC client created in your provider
+      admin_group:
+        name: Admin Group (optional)
+        description: >-
+          OIDC group name granted permission to edit the dashboard; without it, everyone who logs in can edit
+network:
+  8080/tcp: Dashy (HTTP)

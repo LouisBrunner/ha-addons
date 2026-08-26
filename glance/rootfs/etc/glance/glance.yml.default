@@ -1,0 +1,13 @@
+server:
+  host: 127.0.0.1
+  port: 8080
+  proxied: true
+
+pages:
+  - name: Home
+    columns:
+      - size: full
+        widgets:
+          - type: html
+            source: |
+              <p>Welcome to Glance — edit <code>/data/glance.yml</code> to customize this dashboard.</p>

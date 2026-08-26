@@ -52,5 +52,4 @@ export GATEKEEPER_REQUEST_LOGGING=true
 # GATEKEEPER_CREATE_ACCOUNT_BURST
 
 bashio::log.info "Starting Gatekeeper on port ${GATEKEEPER_PORT}..."
-print_env
 exec /usr/local/bin/pds_gatekeeper

@@ -54,15 +54,5 @@ if bashio::config.true 'debug'; then
 fi
 
 bashio::log.info "Starting Fusion on 0.0.0.0:8080..."
-if bashio::debug; then
-	bashio::log.debug "Environment:"
-	while IFS='=' read -r name value; do
-		case "${name^^}" in
-		*SECRET* | *PASSWORD*) echo "${name}=***REDACTED***" ;;
-		*) echo "${name}=${value}" ;;
-		esac
-	done < <(env)
-fi
-
 cd /data
 exec fusion

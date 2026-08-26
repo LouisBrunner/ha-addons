@@ -20,13 +20,13 @@ options:
   allow_private_feeds: false
   debug: false
 schema:
-  external_url: str
+  external_url: url
   oidc:
-    issuer: str
+    issuer: url
     client_id: str
     client_secret: password
     allowed_user: str?
-  fever_username: str?
+  fever_username: "match(^[a-zA-Z0-9_-]+$)?"
   allow_private_feeds: bool?
   debug: bool?
 ports:

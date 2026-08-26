@@ -32,16 +32,20 @@ ifeq ($(INSIDE_DOCKER),1)
 	@echo "> Unsupported inside the container"
 else
 	@echo "# Developing $(TARGET)"
-	hot -d $(TARGET) make TARGET=$(TARGET) rebuild
+	hot -d $(TARGET) -d _common -e dist make TARGET=$(TARGET) rebuild
 endif
 .PHONY: dev
 
 rebuild:
 ifeq ($(INSIDE_DOCKER),1)
-	@echo -n '> '
-	ha apps rebuild --force local_$(TARGET) && ha apps start local_$(TARGET)
+	@$(MAKE) -C _common dist/common.tar.gz >/dev/null
+	@docker inspect common-serve >/dev/null 2>&1 || docker run -d --name common-serve -p 8787:80 -v $(CURDIR)/_common/dist:/usr/share/nginx/html:ro nginx:alpine >/dev/null
+	@case "$$HOT_CHANGED_FILES" in \
+		*config.yaml*) bash _common/reset-cache.sh $(TARGET) ;; \
+		*) ha apps rebuild --force local_$(TARGET) && ha apps start local_$(TARGET) ;; \
+	esac
 else
-	docker compose exec -T devcontainer make TARGET=$(TARGET) rebuild
+	docker compose exec -T -e HOT_CHANGED_FILES devcontainer make TARGET=$(TARGET) rebuild
 endif
 .PHONY: rebuild
 

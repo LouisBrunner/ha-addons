@@ -21,8 +21,6 @@ Self-hosted [AT Protocol](https://atproto.com) Personal Data Server, based on th
 | `gatekeeper.captcha.hcaptcha_site_key`   | If `gatekeeper.captcha.enabled` is `true` | Site Key from [hCaptcha](https://www.hcaptcha.com/)                                                                                                      |
 | `gatekeeper.captcha.hcaptcha_secret_key` | If `gatekeeper.captcha.enabled` is `true` | Secret Key from [hCaptcha](https://www.hcaptcha.com/)                                                                                                    |
 | `gatekeeper.only_migrations`             | No                                        | Disable account creations on Gatekeeper (default: `false`)                                                                                               |
-| `customize.enabled`                      | No                                        | Import a custom Caddyfile snippet from `/share` (default: `false`)                                                                                       |
-| `customize.caddyfile_filename`           | If `customize.enabled` is `true`          | Filename of the `.caddyfile` snippet to import from `/share` (default: `pds.caddyfile`)                                                                  |
 | `debug`                                  | No                                        | Enable extra diagnostic logging (default: `false`)                                                                                                       |
 
 [^recovery_did_key]: Can be generated using `goat key generate`, format `did:key:` expected, see [reference](https://atproto.com/guides/going-to-production#plc-key-management#plc-key-management)

@@ -41,7 +41,7 @@ Only `8080/tcp` matters, point your reverse proxy/tunnel at it (e.g. `http://{SL
 
 ## Mobile clients (Fever API)
 
-Unlike some other RSS readers, Fusion's Fever API uses its own separate username/API key (`fever_username`), independent of the main OIDC login. Point a Fever-compatible client (Reeder, Unread, FeedMe) at this instance using that username; see [Fusion's Fever API guide](https://github.com/0x2E/fusion/blob/main/docs/fever-api.md) for the exact client-side setup.
+Fusion's Fever API uses its own username/API key (`fever_username`), separate from the OIDC login. Point a Fever-compatible client (Reeder, Unread, FeedMe) at this instance using that username; see [Fusion's Fever API guide](https://github.com/0x2E/fusion/blob/main/docs/fever-api.md) for the exact client-side setup.
 
 ## Limitations
 

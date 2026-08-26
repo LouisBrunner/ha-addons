@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
+name: "Dashy"
+description: "Self-hosted dashboard/homepage with native OIDC login"
+version: "0.0.1"
+slug: "dashy"
+# image: ghcr.io/louisbrunner/ha-dashy
+url: "https://github.com/LouisBrunner/ha-addons/blob/main/dashy"
+init: false
+arch:
+  - aarch64
+  - amd64
+options:
+  external_url: ""
+  oidc:
+    issuer: ""
+    client_id: ""
+    admin_group: ""
+schema:
+  external_url: url
+  oidc:
+    issuer: url
+    client_id: str
+    admin_group: str?
+ports:
+  8080/tcp: null

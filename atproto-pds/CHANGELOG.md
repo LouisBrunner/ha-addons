@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.6
+
+- Remove `customize`/`customize.caddyfile_filename` (custom Caddyfile snippet injection)
+- Validate `hostname` and `recovery_did_key` against their expected formats
+- Stop logging the full add-on configuration on startup
+
 ## 0.0.5
 
 Add automatic untethered blob cleanup.

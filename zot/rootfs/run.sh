@@ -31,13 +31,4 @@ chmod 600 /etc/zot/config.json
 bashio::log.debug "config.json: $(jq '.http.auth.openid.providers.oidc.clientsecret = "***REDACTED***"' /etc/zot/config.json)"
 
 bashio::log.info "Starting Zot on :5000..."
-if bashio::debug; then
-	bashio::log.debug "Environment:"
-	while IFS='=' read -r name value; do
-		case "${name^^}" in
-		*SECRET* | *PASSWORD*) echo "${name}=***REDACTED***" ;;
-		*) echo "${name}=${value}" ;;
-		esac
-	done < <(env)
-fi
 exec zot serve /etc/zot/config.json

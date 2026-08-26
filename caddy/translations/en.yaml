@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-translations.schema.json
+---
+configuration:
+  base_domain:
+    name: Base Domain
+    description: >-
+      Domain shared by every entry in Subdomains, e.g. `mydomain.com`
+  email:
+    name: ACME Email
+    description: >-
+      Contact email registered with Let's Encrypt for certificate notices
+  max_body_size_megabytes:
+    name: Max Body Size (MB)
+    description: >-
+      Default request body size cap applied to every subdomain unless it sets its own,
+      `0` = unlimited
+  subdomains:
+    name: Subdomains
+    description: >-
+      Reverse-proxied sites
+    fields:
+      name:
+        name: Name
+        description: >-
+          Subdomain label, combined with Base Domain, e.g. `dashboard` for `dashboard.mydomain.com`
+      upstream:
+        name: Upstream
+        description: >-
+          Address Caddy proxies to, e.g. `some-addon:8080` or `192.168.1.10:80`
+      max_body_size_megabytes:
+        name: Max Body Size (MB, optional)
+        description: >-
+          Override the top-level Max Body Size for this site only, `0` = unlimited
+      no_store:
+        name: No Store (optional)
+        description: >-
+          Send `Cache-Control: no-store` on every response from this site, to stop it being
+          cached anywhere
+  hardening:
+    name: Hardening
+    description: >-
+      Baseline protections applied to every subdomain (headers, rate limiting, request size
+      caps)
+    fields:
+      hsts:
+        name: HSTS
+        fields:
+          max_age_seconds:
+            name: Max Age (seconds, optional)
+            description: >-
+              How long browsers should remember to only use HTTPS for this domain, `0`
+              disables sending Strict-Transport-Security entirely (Caddy doesn't send it
+              by default)
+          include_subdomains:
+            name: Include Subdomains
+            description: >-
+              Apply the HSTS policy to subdomains of this hostname too. This covers the
+              whole Base Domain, including any subdomains this add-on doesn't serve
+      rate_limit:
+        name: Rate Limit
+        fields:
+          events:
+            name: Events (optional)
+            description: >-
+              Maximum requests allowed per Window before further requests are rejected,
+              `0` disables rate limiting entirely
+          window:
+            name: Window
+            description: >-
+              Time window the Events limit applies over, e.g. `1m`
+      block_scanner_probes:
+        name: Block Scanner Probes (optional)
+        description: >-
+          Glob patterns matched against the request path; a match gets rejected with a 403
+          before reaching the upstream (e.g. `*.env`, `*.git/*`), empty list disables this
+      permissions_policy:
+        name: Permissions Policy (optional)
+        description: >-
+          Browser features to deny by default via the Permissions-Policy header (e.g.
+          `camera`, `microphone`), empty list omits the header entirely
+  local_certs:
+    name: Local Certificates (optional)
+    description: >-
+      Use Caddy's own local CA instead of Let's Encrypt/ZeroSSL — for testing without a
+      publicly reachable domain, browsers/clients won't trust the certificate
+  debug:
+    name: Debug Mode
+    description: >-
+      Enable verbose diagnostic logging
+network:
+  443/tcp: Caddy (HTTPS)
+  443/udp: Caddy (HTTP/3)
+  80/tcp: Caddy (HTTP, only needed for HTTP-01 challenges/redirects)

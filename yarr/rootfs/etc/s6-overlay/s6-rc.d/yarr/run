@@ -9,16 +9,10 @@ mkdir -p /data
 export YARR_ADDR=127.0.0.1:7070
 export YARR_DB=/data/yarr.db
 
-FEVER_AUTH_FILE=/data/fever_auth
-if ! bashio::fs.file_exists "${FEVER_AUTH_FILE}"; then
-	bashio::log.info "First run: generating Fever API credentials..."
-	fever_password="$(openssl rand -hex 16)"
-	printf 'fever:%s' "${fever_password}" >"${FEVER_AUTH_FILE}"
-	chmod 600 "${FEVER_AUTH_FILE}"
+if bashio::config.has_value 'fever_password'; then
+	export YARR_AUTH
+	YARR_AUTH="fever:$(bashio::config 'fever_password')"
 fi
-export YARR_AUTH
-YARR_AUTH="$(cat "${FEVER_AUTH_FILE}")"
-bashio::log.info "Fever API username is 'fever', password is in ${FEVER_AUTH_FILE}"
 
 if bashio::config.has_value 'base_path'; then
 	YARR_BASE="$(bashio::config 'base_path')"
@@ -27,5 +21,4 @@ if bashio::config.has_value 'base_path'; then
 fi
 
 bashio::log.info "Starting yarr on ${YARR_ADDR}..."
-print_env
 exec yarr

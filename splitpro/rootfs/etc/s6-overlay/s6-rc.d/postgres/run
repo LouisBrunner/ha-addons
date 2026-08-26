@@ -22,15 +22,15 @@ host  all all 127.0.0.1/32 trust
 EOF
 
 	bashio::log.info "Bootstrapping splitpro role, database and pg_cron extension..."
-	s6-setuidgid postgres pg_ctl -D "${PGDATA}" -o "-c listen_addresses=''" -w start >/dev/null
+	s6-setuidgid postgres pg_ctl -D "${PGDATA}" -o "-c listen_addresses='' -c shared_preload_libraries=pg_cron -c cron.database_name=splitpro" -w start >/dev/null
 	s6-setuidgid postgres psql -U postgres -c "CREATE ROLE splitpro LOGIN;" >/dev/null
 	s6-setuidgid postgres psql -U postgres -c "CREATE DATABASE splitpro OWNER splitpro;" >/dev/null
 	s6-setuidgid postgres psql -U postgres -d splitpro -c "CREATE EXTENSION pg_cron;" >/dev/null
+	s6-setuidgid postgres psql -U postgres -d splitpro -c "GRANT USAGE ON SCHEMA cron TO splitpro; GRANT ALL ON ALL TABLES IN SCHEMA cron TO splitpro;" >/dev/null
 	s6-setuidgid postgres pg_ctl -D "${PGDATA}" -m fast -w stop >/dev/null
 fi
 
 bashio::log.info "Starting PostgreSQL on 127.0.0.1:5432..."
-print_env
 exec s6-setuidgid postgres postgres \
 	-D "${PGDATA}" \
 	-c listen_addresses=127.0.0.1 \

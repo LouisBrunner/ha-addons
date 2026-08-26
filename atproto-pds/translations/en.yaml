@@ -55,17 +55,6 @@ configuration:
         name: Only Migrations
         description: >-
           Enables only migrations, disabling account creation
-  customize:
-    name: Customize
-    fields:
-      enabled:
-        name: Enable Customization
-        description: >-
-          Enables customization of the Caddyfile
-      caddyfile_filename:
-        name: Caddyfile Filename
-        description: >-
-          Filename of the `.caddyfile` snippet to import from `/share` (default: `pds.caddyfile`)
   debug:
     name: Debug Mode
     description: >-

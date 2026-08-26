@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
 name: "Zot"
 description: "Self-hosted OCI/Docker container registry with a web UI (Zot + ZUI)"
-version: "0.0.2"
+version: "0.0.3"
 slug: "zot"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/zot"
 image: ghcr.io/louisbrunner/ha-zot
@@ -57,10 +57,10 @@ options:
   sync: []
   debug: false
 schema:
-  external_url: str
-  blob_upload_timeout: str?
+  external_url: url
+  blob_upload_timeout: "match(^[0-9]+(ns|us|µs|ms|s|m|h)([0-9]+(ns|us|µs|ms|s|m|h))*$)?"
   oidc:
-    issuer: str
+    issuer: url
     client_id: str
     client_secret: password
     provider_name: str?
@@ -83,11 +83,11 @@ schema:
       anonymous_read: bool?
   storage:
     gc: bool?
-    gc_delay: str?
+    gc_delay: "match(^[0-9]+(ns|us|µs|ms|s|m|h)([0-9]+(ns|us|µs|ms|s|m|h))*$)?"
     dedupe: bool?
     retention:
       enabled: bool?
-      delay: str?
+      delay: "match(^[0-9]+(ns|us|µs|ms|s|m|h)([0-9]+(ns|us|µs|ms|s|m|h))*$)?"
       policies:
         - repositories:
             - str
@@ -96,13 +96,13 @@ schema:
           keep_tags:
             - patterns:
                 - str
-              pulled_within: str?
-              pushed_within: str?
+              pulled_within: "match(^[0-9]+(ns|us|µs|ms|s|m|h)([0-9]+(ns|us|µs|ms|s|m|h))*$)?"
+              pushed_within: "match(^[0-9]+(ns|us|µs|ms|s|m|h)([0-9]+(ns|us|µs|ms|s|m|h))*$)?"
               most_recently_pushed_count: int?
   metrics_enabled: bool?
   cve:
     enabled: bool?
-    update_interval: str?
+    update_interval: "match(^[0-9]+(ns|us|µs|ms|s|m|h)([0-9]+(ns|us|µs|ms|s|m|h))*$)?"
   rate_limit:
     enabled: bool?
     requests_per_second: int?
@@ -110,7 +110,7 @@ schema:
       - method: str
         requests_per_second: int
   webhooks:
-    - url: str
+    - url: url
       username: str?
       password: password?
       token: password?
@@ -120,11 +120,11 @@ schema:
       - str
   scrub:
     enabled: bool?
-    interval: str?
+    interval: "match(^[0-9]+(ns|us|µs|ms|s|m|h)([0-9]+(ns|us|µs|ms|s|m|h))*$)?"
   sync:
-    - url: str
+    - url: url
       on_demand: bool?
-      poll_interval: str?
+      poll_interval: "match(^[0-9]+(ns|us|µs|ms|s|m|h)([0-9]+(ns|us|µs|ms|s|m|h))*$)?"
       content_prefix: str?
       content_destination: str?
       username: str?

@@ -30,10 +30,6 @@
   }
   {{- end }}
 
-  {{- if .customize.enabled }}
-  import /share/{{ .customize.caddyfile_filename }}
-  {{- end }}
-
   reverse_proxy http://127.0.0.1:3001 {
     header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
     header_up X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}

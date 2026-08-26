@@ -23,13 +23,13 @@ options:
     retention_interval: ""
   debug: false
 schema:
-  external_url: str
+  external_url: url
   oidc:
-    well_known_url: str
+    well_known_url: url
     client_id: str
     client_secret: password
     provider_name: str?
-  default_homepage: str?
+  default_homepage: "match(^/[a-zA-Z0-9/_-]*$)?"
   upload_max_file_size_mb: int?
   cache_cleanup:
     cron_rule: str?

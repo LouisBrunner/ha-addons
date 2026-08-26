@@ -56,7 +56,5 @@ export PDS_RATE_LIMITS_ENABLED=true
 # PDS_CONTACT_EMAIL_ADDRESS
 
 bashio::log.info "Starting AT Protocol PDS on ${PDS_HOSTNAME}:${PDS_PORT}..."
-print_env
-
 bashio::log.info "You can now point your proxy/tunnel to http://$(hostname):3000"
 exec node --enable-source-maps /usr/local/bin/pds/index.ts

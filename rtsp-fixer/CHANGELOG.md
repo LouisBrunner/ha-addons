@@ -1,5 +1,9 @@
 # Releases
 
+## 0.0.12
+
+Restrict `streams[].name` to a safe identifier format.
+
 ## 0.0.11
 
 Mask `streams[].url` in the UI/logs by typing it as `password` (RTSP URLs commonly embed camera credentials).

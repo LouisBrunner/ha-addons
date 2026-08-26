@@ -1,0 +1,10 @@
+---
+pageInfo:
+  title: Dashy
+  description: Home dashboard
+
+appConfig:
+  theme: colorful
+  disableConfigurationForNonAdmin: true
+
+sections: []

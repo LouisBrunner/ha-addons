@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
+name: "Caddy"
+description: "Generic HTTPS reverse proxy with automatic certs"
+version: "0.0.1"
+slug: "caddy"
+# image: ghcr.io/louisbrunner/ha-caddy
+url: "https://github.com/LouisBrunner/ha-addons/blob/main/caddy"
+init: false
+arch:
+  - aarch64
+  - amd64
+options:
+  base_domain: ""
+  email: ""
+  max_body_size_megabytes: 16
+  subdomains: []
+  hardening:
+    hsts:
+      max_age_seconds: 63072000
+      include_subdomains: true
+    rate_limit:
+      events: 500
+      window: 10s
+    block_scanner_probes:
+      - "*..*"
+      - "*.env"
+      - "*.env/*"
+      - "*.git/*"
+      - "*config.php*"
+      - "*wp-config*"
+    permissions_policy:
+      - browsing-topics
+      - attribution-reporting
+      - local-fonts
+      - idle-detection
+      - ch-ua-high-entropy-values
+      - compute-pressure
+      - camera
+      - microphone
+      - geolocation
+      - usb
+      - hid
+      - serial
+      - bluetooth
+      - midi
+      - display-capture
+      - payment
+      - fullscreen
+      - autoplay
+      - picture-in-picture
+      - screen-wake-lock
+      - window-management
+      - clipboard-read
+  local_certs: false
+  debug: false
+schema:
+  base_domain: "match(^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$)"
+  email: email
+  max_body_size_megabytes: int(0,)
+  subdomains:
+    - name: "match(^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$)"
+      upstream: "match(^[a-zA-Z0-9.-]+(:[0-9]{1,5})?$)"
+      max_body_size_megabytes: int(0,)?
+      no_store: bool?
+  hardening:
+    hsts:
+      max_age_seconds: int(0,)?
+      include_subdomains: bool?
+    rate_limit:
+      events: int(0,)?
+      window: "match(^[0-9]+(ns|us|µs|ms|s|m|h)([0-9]+(ns|us|µs|ms|s|m|h))*$)?"
+    block_scanner_probes: ["str"]
+    permissions_policy: ["str"]
+  local_certs: bool?
+  debug: bool?
+ports:
+  443/tcp: 443
+  443/udp: null
+  80/tcp: null

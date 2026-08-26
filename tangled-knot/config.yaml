@@ -13,8 +13,8 @@ options:
   hostname: ""
   owner_did: ""
 schema:
-  hostname: str
-  owner_did: str
+  hostname: "match(^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$)"
+  owner_did: "match(^did:[a-z0-9]+:.+$)"
 ports:
   5555/tcp: null
   22/tcp: 2525

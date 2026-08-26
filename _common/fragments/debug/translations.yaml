@@ -1,0 +1,4 @@
+debug:
+  name: Debug Mode
+  description: >-
+    Enable verbose diagnostic logging

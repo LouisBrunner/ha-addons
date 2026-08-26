@@ -88,9 +88,11 @@ jobs:
           persist-credentials: false
 
       - name: Build image
-        uses: home-assistant/builder/actions/build-image@4de35182ce1e329181bffcbcc84d33db5e2c7e10 # 2026.06.0
+        uses: ./.github/actions/build-image
         with:
           arch: ${{ matrix.arch }}
+          build-contexts: |
+            common=./_common/rootfs
           cache-gha-scope: ${{ inputs.addon }}-${{ matrix.arch }}
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
           context: "./${{ inputs.addon }}"
@@ -99,9 +101,12 @@ jobs:
             ${{ needs.prepare.outputs.version }}
             latest
           labels: |
-            io.hass.type=addon
+            io.hass.type=app
             io.hass.name=${{ needs.prepare.outputs.name }}
             io.hass.description=${{ needs.prepare.outputs.description }}
+            org.opencontainers.image.title=${{ needs.prepare.outputs.name }}
+            org.opencontainers.image.description=${{ needs.prepare.outputs.description }}
+            org.opencontainers.image.revision=${{ github.sha }}
           push: ${{ inputs.publish }}
           version: ${{ needs.prepare.outputs.version }}
 

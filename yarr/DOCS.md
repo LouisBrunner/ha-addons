@@ -20,6 +20,7 @@ Login is via OIDC only, set your provider's details below and there's nothing el
 | `oidc.client_secret` | Yes      | OIDC client secret                                                                                              |
 | `oidc.provider_name` | No       | Display name on the login button                                                                                |
 | `base_path`          | No       | Mount yarr under a URL sub-path (e.g. `/rss`) instead of the root                                               |
+| `fever_password`     | No       | Password for Fever-compatible mobile clients, leave unset to disable Fever access (see [Mobile clients](#mobile-clients-fever-api)) |
 | `debug`              | No       | Enable verbose diagnostic logging                                                                               |
 
 Your OIDC provider must support standard auto-discovery.
@@ -34,11 +35,10 @@ Only `3000/tcp` matters, point your reverse proxy/tunnel at it (e.g. `http://{SL
 | --------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `/data/yarr.db`       | SQLite database (feeds, articles)                                                                          |
 | `/data/cookie_secret` | Login session signing key, generated once on first run, losing it just logs everyone out                   |
-| `/data/fever_auth`    | Fever API username/password, generated once on first run (see [Mobile clients](#mobile-clients-fever-api)) |
 
 ## Mobile clients (Fever API)
 
-Fever-compatible clients (Reeder, Unread, FeedMe) authenticate per-request with their own username/password, stored in `/data/fever_auth` (format `username:password`); the username is always `fever`. Enter the hostname, `fever`, and that password into your client's Fever setup screen.
+Set `fever_password` to enable Fever-compatible clients (Reeder, Unread, FeedMe), which authenticate per-request with their own username/password instead of OIDC; the username is always `fever`, the password is whatever you set. Enter the hostname, `fever`, and that password into your client's Fever setup screen. Leave `fever_password` unset if you don't need mobile clients — the web UI works the same either way.
 
 ## Limitations
 

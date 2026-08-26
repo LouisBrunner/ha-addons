@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://schemas.lbrunner.net/home-assistant/addon-config.schema.json
 name: "yarr"
 description: "Minimal self-hosted RSS reader (yet another rss reader)"
-version: "0.0.2"
+version: "0.0.3"
 slug: "yarr"
 url: "https://github.com/LouisBrunner/ha-addons/blob/main/yarr"
 image: ghcr.io/louisbrunner/ha-yarr
@@ -17,15 +17,17 @@ options:
     client_secret: ""
     provider_name: ""
   base_path: ""
+  fever_password: ""
   debug: false
 schema:
-  hostname: str
+  hostname: "match(^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$)"
   oidc:
-    issuer: str
+    issuer: url
     client_id: str
     client_secret: password
     provider_name: str?
-  base_path: str?
+  base_path: "match(^/[a-zA-Z0-9/_-]*$)?"
+  fever_password: password?
   debug: bool?
 ports:
   3000/tcp: null
