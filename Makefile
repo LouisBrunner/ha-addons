@@ -4,6 +4,10 @@ INSIDE_DOCKER = $(shell stat /.indocker 2>&1 >/dev/null && echo 1 || echo 0)
 ifeq ($(INSIDE_DOCKER),1)
 endif
 
+CONFIG = $(TARGET)/config.yaml
+IMAGE_COMMENT_CMD = sed -i '' s/^image:/\#image:/ $(CONFIG)
+IMAGE_UNCOMMENT_CMD = sed -i '' s/^\#image:/image:/ $(CONFIG)
+
 all:
 .PHONY: all
 
@@ -11,7 +15,7 @@ setup:
 ifeq ($(INSIDE_DOCKER),1)
 	ha apps install local_$(TARGET)
 else
-	docker compose exec -T devcontainer make TARGET=$(TARGET) setup
+	lifecycle -s $(IMAGE_COMMENT_CMD) % -e $(IMAGE_UNCOMMENT_CMD) % -- docker compose exec -T devcontainer make TARGET=$(TARGET) setup
 endif
 .PHONY: setup
 
@@ -36,18 +40,32 @@ else
 endif
 .PHONY: dev
 
+dev-serve-common:
+ifeq ($(INSIDE_DOCKER),1)
+	@docker inspect common-serve >/dev/null 2>&1 \
+		|| docker run -d --name common-serve -p 8787:80 -v $(CURDIR)/_common/dist:/usr/share/nginx/html:ro nginx:alpine >/dev/null
+else
+	@echo "# Unsupported outside the container"
+endif
+.PHONY: dev-serve-common
+
 rebuild:
 ifeq ($(INSIDE_DOCKER),1)
+	@$(MAKE) dev-serve-common
+	@$(MAKE) TARGET=$(TARGET) rebuild-actual
+else
 	@$(MAKE) -C _common dist/common.tar.gz >/dev/null
-	@docker inspect common-serve >/dev/null 2>&1 || docker run -d --name common-serve -p 8787:80 -v $(CURDIR)/_common/dist:/usr/share/nginx/html:ro nginx:alpine >/dev/null
+	lifecycle -s $(IMAGE_COMMENT_CMD) % -e $(IMAGE_UNCOMMENT_CMD) % -- \
+		docker compose exec -T -e HOT_CHANGED_FILES devcontainer make TARGET=$(TARGET) rebuild
+endif
+.PHONY: rebuild
+
+rebuild-actual:
 	@case "$$HOT_CHANGED_FILES" in \
 		*config.yaml*) bash _common/reset-cache.sh $(TARGET) ;; \
 		*) ha apps rebuild --force local_$(TARGET) && ha apps start local_$(TARGET) ;; \
 	esac
-else
-	docker compose exec -T -e HOT_CHANGED_FILES devcontainer make TARGET=$(TARGET) rebuild
-endif
-.PHONY: rebuild
+.PHONY: rebuild-actual
 
 logs:
 ifeq ($(INSIDE_DOCKER),1)

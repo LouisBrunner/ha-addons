@@ -10,15 +10,15 @@ or unreachable, only requests to that site fail — every other site keeps worki
 
 ## Configuration
 
-| Option                    | Required | Description                                                                                                         |
-| ------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
-| `base_domain`             | Yes      | Domain shared by every subdomain below, e.g. `mydomain.com`                                                         |
-| `email`                   | Yes      | Contact email registered with Let's Encrypt                                                                         |
-| `max_body_size_megabytes` | No       | Default request body size cap applied to every subdomain, `0` = unlimited (default: `16`)                           |
-| `subdomains`              | No       | List of reverse-proxied sites, see below                                                                            |
-| `hardening.*`             | No       | Baseline protections applied to every subdomain, see below                                                          |
-| `local_certs`            | No       | Use Caddy's own local CA instead of Let's Encrypt/ZeroSSL, for testing without a publicly reachable domain          |
-| `debug`                   | No       | Enable verbose Caddy logging                                                                                        |
+| Option                    | Required | Description                                                                                                |
+| ------------------------- | -------- | ---------------------------------------------------------------------------------------------------------- |
+| `base_domain`             | Yes      | Domain shared by every subdomain below, e.g. `mydomain.com`                                                |
+| `email`                   | Yes      | Contact email registered with Let's Encrypt                                                                |
+| `max_body_size_megabytes` | No       | Default request body size cap applied to every subdomain, `0` = unlimited (default: `16`)                  |
+| `subdomains`              | No       | List of reverse-proxied sites, see below                                                                   |
+| `hardening.*`             | No       | Baseline protections applied to every subdomain, see below                                                 |
+| `local_certs`             | No       | Use Caddy's own local CA instead of Let's Encrypt/ZeroSSL, for testing without a publicly reachable domain |
+| `debug`                   | No       | Enable verbose Caddy logging                                                                               |
 
 Example:
 
@@ -35,12 +35,12 @@ subdomains:
 
 Each `subdomains` entry is:
 
-| Option                     | Required | Description                                                             |
-| -------------------------- | -------- | ------------------------------------------------------------------------ |
-| `name`                     | Yes      | Subdomain label, e.g. `dashboard` for `dashboard.mydomain.com`          |
-| `upstream`                 | Yes      | Address Caddy proxies to, e.g. `some-addon:8080` or `192.168.1.10:80`   |
-| `max_body_size_megabytes`  | No       | Override the top-level Max Body Size for this site only, `0` = unlimited |
-| `no_store`                 | No       | Send `Cache-Control: no-store` on every response from this site         |
+| Option                    | Required | Description                                                              |
+| ------------------------- | -------- | ------------------------------------------------------------------------ |
+| `name`                    | Yes      | Subdomain label, e.g. `dashboard` for `dashboard.mydomain.com`           |
+| `upstream`                | Yes      | Address Caddy proxies to, e.g. `some-addon:8080` or `192.168.1.10:80`    |
+| `max_body_size_megabytes` | No       | Override the top-level Max Body Size for this site only, `0` = unlimited |
+| `no_store`                | No       | Send `Cache-Control: no-store` on every response from this site          |
 
 Each entry is a plain reverse proxy: one hostname to one upstream, with the baseline
 hardening below always applied.
@@ -89,17 +89,12 @@ connection IP.
 
 ## Ports
 
-`443/tcp` is published to the host by default. `80/tcp` and `443/udp` (HTTP/3) exist in the
-port map but are unpublished (`null`) by default — remap them if you need HTTP-01
-challenges, a plain-HTTP redirect, or QUIC.
+`443/tcp` and `443/udp` (HTTP/3) are published to the host by default. `80/tcp` exists in the
+port map but is unpublished (`null`) by default — remap it if you need HTTP-01 challenges or
+a plain-HTTP redirect.
 
 ## Persistent data
 
 | Path          | Contents                                                           |
 | ------------- | ------------------------------------------------------------------ |
 | `/data/caddy` | Caddy's own state: issued certificates, OCSP staples, ACME account |
-
-## Limitations
-
-- Each `subdomains` entry is a plain reverse proxy only — no second hostname per site, path
-  routing, custom auth, or per-site upstream timeout, and no config-file import mechanism.

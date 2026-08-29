@@ -9,8 +9,10 @@ if [[ -f /etc/caddy/setup.sh ]]; then
 fi
 
 bashio::log.info "Generating Caddyfile from template"
+extra_vars="${CADDY_EXTRA_VARS:-}"
+[[ -z "${extra_vars}" ]] && extra_vars="{}"
 bashio::addon.config \
-	| jq --argjson extra "${CADDY_EXTRA_VARS:-{}}" '. * $extra' \
+	| jq --argjson extra "${extra_vars}" '. * $extra' \
 	| tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile
 bashio::log.debug "Caddyfile: $(cat /etc/caddy/Caddyfile)"
 

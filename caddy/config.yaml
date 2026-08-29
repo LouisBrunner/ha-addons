@@ -75,5 +75,5 @@ schema:
   debug: bool?
 ports:
   443/tcp: 443
-  443/udp: null
+  443/udp: 443
   80/tcp: null

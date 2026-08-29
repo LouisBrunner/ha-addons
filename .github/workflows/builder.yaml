@@ -2,7 +2,7 @@
 name: Builder
 
 env:
-  MONITORED_FILES: "config.yaml Dockerfile rootfs server run.sh"
+  MONITORED_FILES: "config.yaml Dockerfile rootfs server translations icon.png logo.png README.md CHANGELOG.md DOCS.md"
 
 on:
   push:

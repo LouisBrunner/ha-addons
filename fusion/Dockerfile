@@ -2,7 +2,7 @@
 FROM ghcr.io/0x2e/fusion:1.2.1 AS app
 
 FROM ghcr.io/home-assistant/base:3.23
-RUN apk add --no-cache openssl~3.5.7
+RUN apk add --no-cache openssl~3.5.8
 COPY --from=app /fusion/fusion /usr/bin/fusion
 COPY rootfs /
 CMD ["/run.sh"]
