@@ -4,11 +4,11 @@ go 1.26.1
 
 require (
 	github.com/bluenviron/gortsplib/v4 v4.16.2
-	github.com/pion/rtcp v1.2.17
+	github.com/pion/rtcp v1.2.18
 	github.com/pion/rtp v1.10.5
 	github.com/sirupsen/logrus v1.10.2
 	github.com/y9o/go-openh264 v0.2.0
-	golang.org/x/image v0.45.0
+	golang.org/x/image v0.46.0
 )
 
 require (
@@ -25,7 +25,7 @@ require (
 	golang.org/x/mod v0.31.0 // indirect
 	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/tools v0.40.1-0.20260108161641-ca281cf95054 // indirect
 	honnef.co/go/tools v0.7.0 // indirect
 )
