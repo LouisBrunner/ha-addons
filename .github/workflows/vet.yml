@@ -28,7 +28,7 @@ jobs:
           persist-credentials: false
 
       - id: addons
-        uses: home-assistant/actions/helpers/find-addons@a7c616ce81ccda50150bf1595786c71b1883fabb
+        uses: home-assistant/actions/helpers/find-addons@50baf3a307f87100cf550d4ae127746595030d5d
 
       - id: sort
         env:
